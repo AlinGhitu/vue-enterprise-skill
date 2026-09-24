@@ -12,6 +12,7 @@ Use this when asked to review a Vue or Nuxt app (or a change to one) for securit
 6. Review dependencies and CI, not just app code.
 7. Never propose disabling a security control as a fix (turning off CSP, adding `unsafe-eval`, widening `server.fs.allow`, skipping sanitization). Fix the code that conflicts with the control.
 8. Start from trust boundaries and reason with STRIDE before enumerating findings.
+9. Review the code and config you were given. Send requests, scans or proof-of-concept payloads only to environments the user names and is authorized to test, never to production or third-party hosts. Keep secrets, tokens and personal data found during the review out of the report: cite the file and line, not the value.
 
 ## Step 1 — Map the trust boundaries
 

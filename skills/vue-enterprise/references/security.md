@@ -54,7 +54,7 @@ A `v-safe-html` directive wrapping `sanitizeHtml` keeps call sites free of `v-ht
 - `frame-ancestors 'self'` (or `'none'`) is the clickjacking control; `X-Frame-Options` is obsolete and a JS frame-buster is bypassable.
 - The rest of the header set, from the edge or from `nuxt-security`: `Strict-Transport-Security` (≥ 1 year, `includeSubDomains`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` (or stricter), `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy`, a restrictive `Permissions-Policy`. `nuxt-security`'s defaults are a sound baseline and include nonce-based CSP and SRI.
 - **Trusted Types:** with `require-trusted-types-for 'script'`, Vue automatically registers a policy named `vue` for its own `innerHTML` writes, so the `trusted-types` directive must allow `vue` plus your sanitizer's policy (`dompurify`). Values you hand to `v-html` must already be `TrustedHTML` (`RETURN_TRUSTED_TYPE: true`).
-- Check the policy with `csp-evaluator` or Lighthouse's `csp-xss` audit, and headers with `npx @mdn/mdn-http-observatory <host>`.
+- Check the policy with `csp-evaluator` or Lighthouse's `csp-xss` audit, and headers with `npx @mdn/mdn-http-observatory <host>`. Scan only hosts the user names and is authorized to test (usually staging), never a third-party site.
 
 ## Secrets and build output [docs, CB]
 
@@ -133,6 +133,6 @@ Frontend security depends on answers the frontend can't verify. Settle these in 
 ## Tooling [CB, docs]
 
 - Lint: `vue/no-v-html` (error, disable per line with the sanitizer named), `vue/no-v-text-v-html-on-component`, `vue/no-template-target-blank`, `vue/no-restricted-syntax` for `innerHTML`; `eslint-plugin-no-unsanitized` for `.ts` files (it doesn't parse SFC templates); `eslint-plugin-security` with human triage (high false-positive rate).
-- Static analysis: Semgrep with `p/xss` and `p/javascript` (the registry also has Vue template XSS rules under `javascript/vue/security`; check the current rule ids with `semgrep --config p/javascript --json`); CodeQL for JS/TS if the repo has GitHub Advanced Security.
+- Static analysis: Semgrep with `p/xss` and `p/javascript` (the registry also has Vue template XSS rules under `javascript/vue/security`; check the current rule ids with `semgrep --config p/javascript --json --metrics=off`). Semgrep sends usage metrics by default whenever it pulls registry rules; pass `--metrics=off` (or set `SEMGREP_SEND_METRICS=off`) unless the organization allows it; CodeQL for JS/TS if the repo has GitHub Advanced Security.
 - CI: secret scanning of history and `dist/` (gitleaks or trufflehog), `pnpm audit --audit-level=high --prod`, a sourcemap check on `dist/`, and nightly `@mdn/mdn-http-observatory` plus an OWASP ZAP baseline scan against staging (passive only; it won't find logic flaws).
 - Keep a `SECURITY.md` with the disclosure contact.

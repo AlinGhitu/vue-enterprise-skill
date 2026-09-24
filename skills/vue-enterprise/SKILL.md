@@ -129,4 +129,4 @@ When you hand part of a Vue task to a sub-agent (audits, parallel file reviews, 
 
 ## Version
 
-Version 1.0.0 · Last checked against the official docs: 2026-09-24 · Maintainer: Alin Ghitu ([AlinGhitu/vue-enterprise-skill](https://github.com/AlinGhitu/vue-enterprise-skill)); changes are listed in the repository's `CHANGELOG.md`. The version numbers pinned in this skill were current on that date. Six months after it, treat them as unverified: check `package.json` and the official docs before relying on one.
+Version 1.0.1 · Last checked against the official docs: 2026-09-24 · Maintainer: Alin Ghitu ([AlinGhitu/vue-enterprise-skill](https://github.com/AlinGhitu/vue-enterprise-skill)); changes are listed in the repository's `CHANGELOG.md`. The version numbers pinned in this skill were current on that date. Six months after it, treat them as unverified: check `package.json` and the official docs before relying on one.

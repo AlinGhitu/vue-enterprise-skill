@@ -2,6 +2,15 @@
 
 The skill follows semantic versioning. A major version changes a rule an agent would follow differently; a minor version adds guidance; a patch fixes wording, links or examples. The version and the "last checked" date live at the bottom of `skills/vue-enterprise/SKILL.md`.
 
+## 1.0.1 — 2026-09-24
+
+Security and privacy fixes.
+
+- Security reviews send requests, scans and proof-of-concept payloads only to environments the user authorizes, and reports cite a secret's file and line, never its value (security-review ground rule 9).
+- HTTP Observatory scans only hosts the user names and is authorized to test.
+- Semgrep runs with `--metrics=off`: it otherwise sends usage metrics whenever it pulls registry rules.
+- README: removed the third-party installer; install with `git clone` only.
+
 ## 1.0.0 — 2026-09-24
 
 First public release.

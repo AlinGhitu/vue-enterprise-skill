@@ -8,14 +8,6 @@ Every rule is checked against the official Vue, Pinia, Pinia Colada, Vue Router 
 
 Put the skill into your app repository at `.claude/skills/vue-enterprise/`. Claude Code reads skills only from `.claude/skills/`, and Copilot reads that folder as well, so one copy serves both tools.
 
-With the [skills CLI](https://github.com/vercel-labs/skills):
-
-```sh
-npx skills add AlinGhitu/vue-enterprise-skill
-```
-
-Or copy it by hand:
-
 ```sh
 git clone https://github.com/AlinGhitu/vue-enterprise-skill.git
 cp -r vue-enterprise-skill/skills/vue-enterprise <your-app>/.claude/skills/
