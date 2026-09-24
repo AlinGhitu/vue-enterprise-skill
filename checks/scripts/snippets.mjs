@@ -1,0 +1,173 @@
+// Which code blocks in the skill are compiled, linted and tested, and where each one is written.
+// `match` is a line that appears in exactly one fenced block of `md`. `before`/`after` wrap
+// fragments so they compile; the block itself is copied verbatim.
+
+const script = (imports) => `<script setup lang="ts">\n${imports}\n`
+
+export const snippets = [
+  {
+    md: 'errors.md',
+    match: '// shared/lib/errors.ts',
+    out: 'src/shared/lib/errors.ts',
+  },
+  {
+    md: 'errors.md',
+    match: 'onErrorCaptured((err) => {',
+    out: 'src/shared/ui/ErrorBoundary.vue',
+    before: script([
+      "import { onErrorCaptured, shallowRef } from 'vue'",
+      "import { toError } from '@/shared/lib/errors'",
+      "import { report } from '@/shared/lib/monitoring'",
+      '',
+      'defineSlots<{ default(): unknown; error(props: { error: Error; reset: () => void }): unknown }>()',
+      '',
+    ].join('\n')),
+    after: [
+      '',
+      'function reset(): void {',
+      '  error.value = null',
+      '}',
+      '</script>',
+      '',
+      '<template>',
+      '  <slot v-if="error" name="error" :error="error" :reset="reset" />',
+      '  <slot v-else />',
+      '</template>',
+      '',
+    ].join('\n'),
+  },
+  {
+    md: 'security.md',
+    match: '// shared/lib/sanitize.ts',
+    out: 'src/shared/lib/sanitize.ts',
+  },
+  {
+    md: 'composables.md',
+    match: 'export function useInvoice(',
+    out: 'src/features/invoices/composables/useInvoice.ts',
+  },
+  {
+    md: 'components.md',
+    match: '// disabled defaults to undefined explicitly',
+    out: 'src/shared/ui/BaseButton.vue',
+    before: script([
+      "import { computed, inject } from 'vue'",
+      "import { ButtonGroupKey, useUiConfig } from '@/shared/ui/context'",
+      '',
+    ].join('\n')),
+    after: [
+      '</script>',
+      '',
+      '<template>',
+      '  <button type="button" :disabled="isDisabled" :data-size="resolvedSize">Save</button>',
+      '</template>',
+      '',
+    ].join('\n'),
+  },
+  {
+    md: 'forms.md',
+    match: 'const model = defineModel<Invoice>({ required: true })',
+    out: 'src/features/invoices/components/InvoiceForm.vue',
+    before: script([
+      "import { ref, toRaw, watch } from 'vue'",
+      "import type { Invoice } from '../api'",
+      '',
+    ].join('\n')),
+    after: [
+      '</script>',
+      '',
+      '<template>',
+      '  <form @submit.prevent="submit">',
+      '    <label for="invoice-number">Number</label>',
+      '    <input id="invoice-number" v-model="form.number">',
+      '    <button type="submit">Save</button>',
+      '  </form>',
+      '</template>',
+      '',
+    ].join('\n'),
+  },
+  {
+    md: 'routing.md',
+    match: 'export function parseInvoiceId(',
+    out: 'src/features/invoices/route-params.ts',
+  },
+  {
+    md: 'routing.md',
+    match: '<!-- src/pages/invoices/[id].vue -->',
+    out: 'src/pages/invoices/[id].vue',
+  },
+  {
+    md: 'server-data.md',
+    match: 'export const INVOICE_KEYS = {',
+    out: 'src/features/invoices/queries.ts',
+    before: "import { defineQueryOptions } from '@pinia/colada'\nimport { api } from '@/shared/api'\n\n",
+  },
+  {
+    md: 'server-data.md',
+    match: 'const { mutate, asyncStatus } = useMutation({',
+    out: 'src/features/invoices/composables/useCreateInvoice.ts',
+    before: [
+      "import { useMutation, useQueryCache } from '@pinia/colada'",
+      "import { api, type NewInvoice } from '@/shared/api'",
+      "import { INVOICE_KEYS } from '../queries'",
+      '',
+      '// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types -- harness wrapper around a skill fragment',
+      'export function useCreateInvoice() {',
+      '',
+    ].join('\n'),
+    after: '  return { mutate, asyncStatus }\n}\n',
+  },
+  {
+    md: 'state-and-data.md',
+    match: 'import.meta.hot.accept(acceptHMRUpdate(useInvoiceStore',
+    out: 'src/features/invoices/stores/invoice.ts',
+    before: [
+      "import { acceptHMRUpdate, defineStore } from 'pinia'",
+      "import { ref } from 'vue'",
+      '',
+      "export const useInvoiceStore = defineStore('invoice', () => {",
+      '  const selectedId = ref<string | null>(null)',
+      '  function $reset(): void {',
+      '    selectedId.value = null',
+      '  }',
+      '  return { selectedId, $reset }',
+      '})',
+      '',
+    ].join('\n'),
+  },
+  {
+    md: 'testing.md',
+    match: 'export function withSetup<T>(',
+    out: 'test/withSetup.ts',
+  },
+  {
+    md: 'typescript.md',
+    match: '// src/types/vue.d.ts: declare data-* attributes for strictTemplates',
+    out: 'src/types/vue.d.ts',
+  },
+  {
+    md: 'typescript.md',
+    match: '<script setup lang="ts" generic="T extends { id: string }">',
+    out: 'src/shared/ui/DataList.vue',
+    after: [
+      '',
+      '<template>',
+      '  <ul>',
+      '    <li v-for="(item, index) in items" :key="item.id">',
+      '      <button type="button" @click="emit(\'pick\', item)">',
+      '        <slot name="row" :item="item" :index="index" />',
+      '      </button>',
+      '    </li>',
+      '  </ul>',
+      '</template>',
+      '',
+    ].join('\n'),
+  },
+  {
+    md: 'tooling.md',
+    match: "// eslint.config.js, after ...pluginVue.configs['flat/recommended-error']",
+    out: 'eslint.skill-rules.js',
+    before: '// The skill\'s ESLint rule block, exported for eslint.config.js.\nexport default ',
+    // The block is `// comment` + an object literal ending in `}`; the comment line is kept.
+  },
+]
