@@ -1,6 +1,6 @@
 # Auth
 
-Source tags: [IETF] RFC 10017 (OAuth for browser apps, BCP 212), RFC 9700, OpenID Connect Core · [OWASP] ASVS 5.0, Cheat Sheet Series · [CB] open-source codebases. Everything else in the browser → [security](security.md).
+Everything else in the browser → [security](security.md).
 
 - **Architecture first (RFC 10017).** The BFF pattern, where your backend is the OAuth client, holds the tokens and the browser holds only a session cookie to its own backend, is "strongly recommended for business applications, sensitive applications, and applications that handle personal data". Default to it. Nuxt server routes are a BFF; `nuxt-auth-utils` gives sealed session cookies with a server-only `secure` sub-object for tokens (`NUXT_SESSION_PASSWORD` ≥ 32 chars, set explicitly in production).
 - Tokens in the browser only when there is no backend to hold them, or when the same API serves non-browser clients (a desktop or CLI client). Then: authorization code + PKCE, tokens in memory, never refresh tokens in `localStorage`, and a hardened CSP because one XSS reads everything JS can read. The choice is an architecture, not a storage tip: "prefer cookies" alone doesn't answer it.

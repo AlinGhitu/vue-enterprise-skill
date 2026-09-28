@@ -1,14 +1,14 @@
 # TypeScript
 
-Source tags: [docs] Vue, Pinia, Pinia Colada, Vue Router, Vue language tools · [TS] TypeScript docs, release notes, tsconfig reference · [TE] typescript-eslint · [MP] Matt Pocock / Total TypeScript · [ET] Effective TypeScript · [AF] Anthony Fu / VueUse · [GL] GitLab · [CB] open-source codebases (Directus, Vikunja, n8n, Elk, Hoppscotch, NocoDB, Nuxt UI, Element Plus, Vuetify, PrimeVue, Reka UI, shadcn-vue, VueUse, Pinia, Vue Router, Pinia Colada). Every snippet here type-checks under `vue-tsc` 3.3 with `strictTemplates` against Vue 3.5.43.
+Every snippet here type-checks under `vue-tsc` 3.3 with `strictTemplates` against Vue 3.5.43.
 
-## Typing components [docs, CB]
+## Typing components
 
 - **Props:** `defineProps<Props>()`. Export the interface from a plain `<script lang="ts">` block in the same SFC or from a sibling `types.ts`; pick one per project. Consumers import `{ type InvoiceTableProps }` from the component. Imported types, intersections and `Omit`/`Pick` work (3.3+); a conditional type is fine for one prop, not for the whole object.
 - Type-based props generate runtime validators in dev builds only; production compiles them to a name list. Runtime `defineProps({ status: { type: String as PropType<Status>, validator } })` is the tool when you need a runtime `validator`, or when a component library composes prop sets across factories. Libraries keep runtime props by design; in app code, type-based is the default.
 - Native-element wrappers and foreign hand-written types: `interface Props extends /* @vue-ignore */ ButtonHTMLAttributes { … }`, so the compiler skips runtime validators it can't derive. Pair with `inheritAttrs: false` + `v-bind="$attrs"` (see [components](components.md)).
 - Defaults: Vue ≥ 3.5 destructure (`const { size = 'md' } = defineProps<Props>()`), plain values for arrays and objects; below 3.5, `withDefaults` with factories. On 3.5+ both are correct; pick one per project and enforce it with `vue/define-props-destructuring`.
-- Array and object props are `readonly`: `items: readonly Invoice[]`. A child then can't `push` into the parent's array, which is the "don't mutate what you don't own" rule enforced by the compiler. [ET]
+- Array and object props are `readonly`: `items: readonly Invoice[]`. A child then can't `push` into the parent's array, which is the "don't mutate what you don't own" rule enforced by the compiler.
 - A prop that takes a known set but must stay open: `variant?: 'primary' | 'ghost' | (string & {})` keeps autocomplete and accepts other strings.
 - A prop that takes a component: `import type { Component } from 'vue'`; `as?: string | Component`.
 - Multi-type boolean props cast by order (`[Boolean, String]` bare attribute → `true`; `[String, Boolean]` → `""`); see [components](components.md).
@@ -34,7 +34,7 @@ defineExpose({ scrollTo: (id: string) => items.findIndex((i) => i.id === id) })
 - TSX (only if the project uses it): `jsx: "preserve"` + `jsxImportSource: "vue"`; Vue 3.4 stopped registering a global `JSX` namespace. `FunctionalComponent<Props, Emits, Slots>` for functional components; runtime `props`/`emits` must still be attached.
 - Template expressions don't get `<script>` narrowing: a `string | number` prop still needs a `computed` (preferred) or an inline cast in the template.
 
-## Typing state and context [docs, CB]
+## Typing state and context
 
 - `ref<Invoice | null>(null)`; `ref<number>()` is `Ref<number | undefined>`; `vue/require-typed-ref` forbids a bare `ref()` that would be `Ref<any>`. `reactive`: annotate the variable (`const form: Form = reactive({…})`), never the generic. `computed<T>()` only when the getter's inferred type is wider than intended.
 - DOM events: `(e: Event) => (e.target as HTMLInputElement).value`, or a typed handler prop.
@@ -46,7 +46,7 @@ defineExpose({ scrollTo: (id: string) => items.findIndex((i) => i.id === id) })
 - vue-i18n: augment `DefineLocaleMessage`, `DefineDateTimeFormat` and `DefineNumberFormat` for typed keys (JSON messages only, not `<i18n>` blocks); see [i18n](i18n.md).
 - `:style` objects accept custom properties (`{ '--accent': color }`) out of the box; no `CSSProperties` augmentation is needed on Vue 3.3+.
 
-## Boundaries [docs, TS, CB]
+## Boundaries
 
 - **Where wire types come from**, in order of preference: a generated client from the API contract (`openapi-typescript` + `openapi-fetch`, `@hey-api/openapi-ts`, Orval; GraphQL codegen `client` preset; oRPC or tRPC when the backend is TypeScript in the same repo), then a first-party SDK or types package, then hand-written interfaces for a small API. Commit generated output or regenerate in CI with a drift check; exclude it from lint.
 - `await res.json()` is `any`. A generated client types what the contract says, not what arrived. Parse with a schema where data is untrusted or drifts: user input and forms, route params and query strings, storage, `import.meta.env`, third-party APIs, webhooks, imports. Responses from your own API may trust its generated types; validate every response when the API isn't yours.
@@ -54,25 +54,25 @@ defineExpose({ scrollTo: (id: string) => items.findIndex((i) => i.id === id) })
 - Validate `import.meta.env` once at startup into an exported typed `env`; nothing else reads `import.meta.env` (a schema or `@t3-oss/env-core`).
 - `catch (e)` is `unknown`: `e instanceof ApiError` before reading fields, `toError(e)` ([errors](errors.md)) when you must have an `Error`; never `e as Error`. Error classes set `override readonly name = 'ApiError'` explicitly, because minifiers rename classes and `.name` matching then breaks; match with `instanceof`. `throw` only `Error` subclasses (`@typescript-eslint/only-throw-error`). `Result<T, E>` types (neverthrow, fp-ts) are a project-wide decision, not a default; see [errors](errors.md).
 
-## Conventions [TS, TE, MP, ET, GL, CB]
+## Conventions
 
-- Model view state as a discriminated union (`{ status: 'loading' } | { status: 'error'; error: Error } | { status: 'ready'; data: T }`), a union of interfaces rather than an interface of optional fields [ET]. Switch on the tag and end with `default: { const never: never = state; return never }`; `@typescript-eslint/switch-exhaustiveness-check` automates it.
-- No `enum`: `export const InvoiceStatus = { Draft: 'draft', Sent: 'sent' } as const; export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]`, or `(typeof STATUSES)[number]` over an `as const` array. Enums are nominal, numeric ones accept any number, and `erasableSyntaxOnly` rejects them [MP, TS].
+- Model view state as a discriminated union (`{ status: 'loading' } | { status: 'error'; error: Error } | { status: 'ready'; data: T }`), a union of interfaces rather than an interface of optional fields. Switch on the tag and end with `default: { const never: never = state; return never }`; `@typescript-eslint/switch-exhaustiveness-check` automates it.
+- No `enum`: `export const InvoiceStatus = { Draft: 'draft', Sent: 'sent' } as const; export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]`, or `(typeof STATUSES)[number]` over an `as const` array. Enums are nominal, numeric ones accept any number, and `erasableSyntaxOnly` rejects them.
 - `satisfies` where a value must match a type without losing its literal shape: query-key factories, route tables, config objects, message maps (`} as const satisfies Record<string, …>`). `as` widens or lies; a `: T` annotation widens.
-- Branded ids when two ids are both strings and swapping them compiles: `type InvoiceId = Brand<string, 'InvoiceId'>` with `type Brand<T, N extends string> = T & { readonly [brand]: N }` over a `unique symbol`; cast once where the id enters (parser, API client) and never again [MP].
+- Branded ids when two ids are both strings and swapping them compiles: `type InvoiceId = Brand<string, 'InvoiceId'>` with `type Brand<T, N extends string> = T & { readonly [brand]: N }` over a `unique symbol`; cast once where the id enters (parser, API client) and never again.
 - `interface` for new object shapes; `type` for unions, brands and transforms (`type InvoicePatch = Partial<Omit<Invoice, 'id'>>`), never a hand-copied duplicate. ⚖ Total TypeScript prefers `type` by default because same-name interfaces silently merge; GitLab and the TypeScript team prefer `interface`. Keep `interface`, enforce one style with `consistent-type-definitions`, and treat an accidental duplicate declaration as the bug it is.
 - Explicit return types on exported functions and composables (`explicit-module-boundary-types`); let inference work inside. Extract inline types that appear twice into a named type.
 - Add a type parameter when the output type depends on an input type (`useFetch<T>`, `useStorage<T>`); otherwise take the concrete type or `unknown`. `<const T extends readonly string[]>` keeps literal tuples without `as const` at call sites; `NoInfer<T>` on a default parameter stops it from widening the inference.
 - `unknown` over `any`; narrow with type predicates (`function isInvoice(x: unknown): x is Invoice`) and `in`/`instanceof`. The sanctioned `any` is one line with `// eslint-disable-next-line @typescript-eslint/no-explicit-any -- reason` and a test; `@ts-expect-error` with a reason, never `@ts-ignore`. No non-null `!` outside tests. New code doesn't add to existing `any` debt: rules are errors with a committed baseline (see [tooling](tooling.md)).
-- Lookups: `Record<Status, string>` when every key exists, `Partial<Record<…>>` when not, `Map` when keys come and go at runtime. A bare index signature says nothing about which keys exist [ET].
+- Lookups: `Record<Status, string>` when every key exists, `Partial<Record<…>>` when not, `Map` when keys come and go at runtime. A bare index signature says nothing about which keys exist.
 - Type-only imports use `import type` / `import { type X }` (`verbatimModuleSyntax` enforces it). Don't also enable `consistent-type-imports`; its docs say the two conflict.
 - `@typescript-eslint/no-floating-promises` and `no-misused-promises`: an `async` handler passed to `@click` or `watch` must not lose its rejection; `void promise` marks the intentional cases.
 - Third-party code without types: a `declare module 'lib'` in `src/types/shims.d.ts`, typed as far as you use it, or a thin typed wrapper component (`interface Props extends /* @vue-ignore */ LibProps {}`). Augmentation can extend existing declarations, not add new default exports.
-- Legacy JS: JSDoc (`@param {string} config.path`, `@returns`, `@type {import('./x').T}`) gives editor inference with no build change [GL].
-- Shared and published packages: `@vue/tsconfig/tsconfig.lib.json` (`skipLibCheck: false`, `noUncheckedIndexedAccess`), `isolatedDeclarations`, exported `UseXOptions`/`UseXReturn` interfaces, `MaybeRefOrGetter<T>` from `vue` for inputs (VueUse deprecated its own copy), precisely typed overloads over one loose implementation signature, and `declare module` hooks (`TypesConfig`-style) when consumers must widen your types [AF, CB].
+- Legacy JS: JSDoc (`@param {string} config.path`, `@returns`, `@type {import('./x').T}`) gives editor inference with no build change.
+- Shared and published packages: `@vue/tsconfig/tsconfig.lib.json` (`skipLibCheck: false`, `noUncheckedIndexedAccess`), `isolatedDeclarations`, exported `UseXOptions`/`UseXReturn` interfaces, `MaybeRefOrGetter<T>` from `vue` for inputs (VueUse deprecated its own copy), precisely typed overloads over one loose implementation signature, and `declare module` hooks (`TypesConfig`-style) when consumers must widen your types.
 - Type tests (`*.test-d.ts` with `expectTypeOf`, run by `vitest --typecheck`) for shared packages, generic components and augmentations. Apps rarely need them.
 
-## Testing types [docs, CB]
+## Testing types
 
 - Typed mocks (`vi.fn<(id: string) => Promise<Invoice | null>>()`, `vi.mocked`) and typed MSW handlers (`http.get<Params, RequestBody, ResponseBody>`) → [testing](testing.md).
 - `mount(InvoiceList).vm` sees only what `defineExpose` exposed; expose more rather than casting `vm`. `wrapper.findComponent<typeof Child>(Child)` returns a typed wrapper.

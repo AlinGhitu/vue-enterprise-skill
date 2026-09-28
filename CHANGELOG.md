@@ -8,6 +8,7 @@ Lower token use; no rule changes.
 
 - `SKILL.md` is about a quarter shorter: the provenance paragraph and the tool compatibility notes moved to the README, and sections 1, 6 and 9 are tighter.
 - Split out of the two largest references, so a task loads only the part it needs: `typescript-config.md` (toolchain and tsconfig) from `typescript.md`; `auth.md` (sessions, tokens, OAuth, CSRF, login) and `ai-features.md` (LLM features) from `security.md`. The index has a row for each.
+- Reference files no longer carry source tags (the legend line and the `[docs, GL]` markers on headings and rules); provenance stays with the maintainer.
 - `assets/vue.instructions.md` and the skill description say the same rules in fewer words.
 
 ## 1.0.1 — 2026-09-24

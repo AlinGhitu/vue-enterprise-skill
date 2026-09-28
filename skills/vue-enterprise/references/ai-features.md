@@ -1,6 +1,6 @@
 # AI features
 
-Source tags: [OWASP LLM Top 10] · [CB] open-source codebases. Security rules for the rest of the app → [security](security.md).
+Security rules for the rest of the app → [security](security.md).
 
 OWASP LLM Top 10 category IDs below are the 2025 edition; a 2026 edition (published August 2026; PDF at genai.owasp.org) supersedes it and may renumber, so check IDs against it. Model output is attacker-influenceable through prompt injection even when the user is trusted.
 

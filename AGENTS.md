@@ -17,7 +17,7 @@ This repository publishes `vue-enterprise`, an Agent Skill with Vue 3 + TypeScri
 - Links are relative to the skill folder. Don't add scripts that need a particular agent to run them.
 - `SKILL.md` loads in full whenever the skill does, so it holds only what every task acts on. Provenance, tool differences and maintainer details go in the README; guidance only some tasks need goes in a reference file behind a row in the index.
 - Keep `assets/vue.instructions.md` under 30 lines. It carries only rules that apply to almost every Vue edit; everything else goes in the skill.
-- Every rule traces to a source. Where sources disagree, mark the rule ⚖ and give the reason in the same line. Keep survey statistics and the history of a rule out of the skill text; agents can't act on them.
+- Every rule traces to a source, recorded in the maintainer notes rather than the skill: reference files carry no source tags. Where sources disagree, mark the rule ⚖ and give the reason in the same line. Keep survey statistics and the history of a rule out of the skill text; agents can't act on them.
 - Code examples must obey the skill's own rules: no `any`, no `as Error`, explicit return types on exports, no native event names in `emits`. When you add or change a `ts`, `vue` or `js` code block, add it to `checks/scripts/snippets.mjs` if it isn't there, then run the checks.
 
 ## Checking a change

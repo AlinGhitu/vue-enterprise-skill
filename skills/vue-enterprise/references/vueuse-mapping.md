@@ -1,7 +1,5 @@
 # VueUse mapping
 
-Source tags: [docs] vueuse.org function pages (via the `vueuse-functions` skill) · [AF] VueUse guidelines · [CB] open-source codebases.
-
 How this file relates to the `vueuse-functions` skill: that skill owns **which** composable fits and **how** to call it (its per-function pages carry usage and type declarations; load it when it is available). This file owns the enterprise side: what to replace, what not to replace, and the checks before adding the dependency. When `vueuse-functions` isn't installed, the tables here plus vueuse.org are enough to proceed.
 
 ## Before using VueUse in a project
