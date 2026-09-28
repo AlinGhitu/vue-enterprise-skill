@@ -28,6 +28,15 @@ The skill loads only when a task matches its description. A short set of rules s
 
 Both tools load the skill when a task involves Vue components, composables, Pinia stores, data fetching, routes, forms, Vue tests, Nuxt, or a Vue/Nuxt security review. You can also call it directly with `/vue-enterprise`.
 
+## Compatibility
+
+- **Supported:** Claude Code, and GitHub Copilot in VS Code agent mode, Copilot CLI and the Copilot cloud (coding) agent. The skill uses the open Agent Skills format with only the `name` and `description` frontmatter fields, which every one of these tools accepts. No scripts; every reference path is relative to the skill folder.
+- **Tested versions:** checked against each tool's docs on 2026-09-24; tested tool versions are recorded here after running the trigger tests in `evals/prompts.md`.
+- **Known differences:**
+  - Loading. Both tools load the skill when its description matches the task, or when it's invoked as `/vue-enterprise`. Each decides relevance its own way, so the same prompt can load it in one tool and not the other. If it doesn't load, name the skill in the prompt.
+  - Always-on rules. Copilot applies `.github/instructions/vue.instructions.md` only to `.vue` and `.ts` files it reads or edits. Claude Code loads the same file at session start when the project's `AGENTS.md` or `CLAUDE.md` imports it.
+  - Copilot code review reads the skill and instructions but can't run commands. It lists the "Done means" checks for the author instead.
+
 ## Adapting it to your organization
 
 Don't edit the installed skill: updates would overwrite your changes. Put additions and overrides in your app's `AGENTS.md` under a "Vue overrides" heading, each naming the rule it replaces and why. The skill tells agents to apply those first.

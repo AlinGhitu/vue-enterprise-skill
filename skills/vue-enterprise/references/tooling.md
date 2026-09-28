@@ -58,7 +58,7 @@ The project's existing tooling wins. These rules are for setting up a new projec
 
 ## Type checking [docs, TS]
 
-- `vue-tsc --build` (project references, what `create-vue` scaffolds) or `vue-tsc --noEmit` (single project) in CI; Nuxt: `nuxt typecheck`. Keep `typescript` on 6.x: `vue-tsc`, the Vue language server and typescript-eslint need the compiler API that TypeScript 7 doesn't ship. Set `vueCompilerOptions.strictTemplates: true` so templates reject unknown props, events and components. tsconfig, strictness flags, TypeScript 7 aliasing → [typescript](typescript.md).
+- `vue-tsc --build` (project references, what `create-vue` scaffolds) or `vue-tsc --noEmit` (single project) in CI; Nuxt: `nuxt typecheck`. Keep `typescript` on 6.x: `vue-tsc`, the Vue language server and typescript-eslint need the compiler API that TypeScript 7 doesn't ship. Set `vueCompilerOptions.strictTemplates: true` so templates reject unknown props, events and components. tsconfig, strictness flags, TypeScript 7 aliasing → [typescript config](typescript-config.md).
 
 ## Logging [GL, OWASP]
 

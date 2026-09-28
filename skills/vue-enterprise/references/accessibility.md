@@ -7,7 +7,7 @@ Source tags: [docs] vuejs.org accessibility guide · [W3C] WCAG 2.2 · [APG] WAI
   - **Focus not obscured (2.4.11):** sticky headers, cookie banners and toasts must not hide the focused element. Add `scroll-padding-top` equal to the sticky header's height.
   - **Dragging movements (2.5.7):** everything done by dragging (reordering, sliders, drop zones, `useDraggable`, `useDropZone`) also works with single clicks or the keyboard: move up/down buttons, a file picker next to the drop zone.
   - **Target size (2.5.8):** pointer targets are at least 24×24 CSS px, or spaced so a 24 px circle around each doesn't overlap another.
-  - **Accessible authentication (3.3.8):** no cognitive tests to log in. Allow paste and password managers, and offer passkeys or email links as alternatives to transcribing codes (see [security](security.md), login forms).
+  - **Accessible authentication (3.3.8):** no cognitive tests to log in. Allow paste and password managers, and offer passkeys or email links as alternatives to transcribing codes (see [auth](auth.md), login forms).
   - **Redundant entry (3.3.7):** don't ask for the same information twice in one flow; prefill it or offer "same as billing address".
   - **Consistent help (3.2.6):** help links and contact options appear in the same place on every page.
 - Semantic HTML first: `<button>` for actions, `<a href>` for navigation, landmarks (`header`, `nav`, `main`, `footer`, `aside`), exactly one `<h1>` per page, and headings in order with no skipped levels. A `<div @click>` isn't keyboard-accessible.

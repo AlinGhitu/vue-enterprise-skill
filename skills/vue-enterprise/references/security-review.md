@@ -1,6 +1,6 @@
 # Security review procedure
 
-Use this when asked to review a Vue or Nuxt app (or a change to one) for security. The rules being checked live in [security](security.md), [supply-chain](supply-chain.md) and [server data](server-data.md); this file is the procedure and the report format.
+Use this when asked to review a Vue or Nuxt app (or a change to one) for security. The rules being checked live in [security](security.md), [auth](auth.md), [AI features](ai-features.md), [supply-chain](supply-chain.md) and [server data](server-data.md); this file is the procedure and the report format.
 
 ## Ground rules
 

@@ -2,6 +2,14 @@
 
 The skill follows semantic versioning. A major version changes a rule an agent would follow differently; a minor version adds guidance; a patch fixes wording, links or examples. The version and the "last checked" date live at the bottom of `skills/vue-enterprise/SKILL.md`.
 
+## 1.0.2 — 2026-09-28
+
+Lower token use; no rule changes.
+
+- `SKILL.md` is about a quarter shorter: the provenance paragraph and the tool compatibility notes moved to the README, and sections 1, 6 and 9 are tighter.
+- Split out of the two largest references, so a task loads only the part it needs: `typescript-config.md` (toolchain and tsconfig) from `typescript.md`; `auth.md` (sessions, tokens, OAuth, CSRF, login) and `ai-features.md` (LLM features) from `security.md`. The index has a row for each.
+- `assets/vue.instructions.md` and the skill description say the same rules in fewer words.
+
 ## 1.0.1 — 2026-09-24
 
 Security and privacy fixes.

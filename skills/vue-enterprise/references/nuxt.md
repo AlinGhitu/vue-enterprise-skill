@@ -33,7 +33,7 @@ For Nuxt 4. The rest of this skill applies to Nuxt apps too; this file covers on
 ## Routing and middleware [docs]
 
 - Page meta with `definePageMeta({ layout, middleware })`. App-wide checks go in a global route middleware (`app/middleware/auth.global.ts`; the `.global` suffix runs it on every route change), driven by page meta.
-- Route middleware decides what to display. Authorization is enforced by the server on every request ([security](security.md)).
+- Route middleware decides what to display. Authorization is enforced by the server on every request ([auth](auth.md)).
 
 ## Server routes [docs]
 
@@ -51,5 +51,5 @@ For Nuxt 4. The rest of this skill applies to Nuxt apps too; this file covers on
 
 ## Type checking and security [docs]
 
-- `nuxt typecheck` in CI; it needs `vue-tsc` and `typescript` as dev dependencies, with the TypeScript 6.x constraint from [typescript](typescript.md). `.nuxt/` is generated and stays uncommitted.
+- `nuxt typecheck` in CI; it needs `vue-tsc` and `typescript` as dev dependencies, with the TypeScript 6.x constraint from [typescript config](typescript-config.md). `.nuxt/` is generated and stays uncommitted.
 - Nuxt-specific security (`nuxt-security`, runtime compiler off, route-rule caching, 2026 CVEs) is in [security](security.md).

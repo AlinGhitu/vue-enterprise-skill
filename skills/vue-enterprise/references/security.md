@@ -1,6 +1,6 @@
 # Security
 
-Source tags: [docs] Vue, Vite, Nuxt, DOMPurify, MDN docs · [OWASP] Top 10:2025, ASVS 5.0, Cheat Sheet Series, LLM Top 10 · [IETF] RFC 10017 (OAuth for browser apps, BCP 212), RFC 9700, OpenID Connect Core · [GL] GitLab · [MO] Markus Oberlehner · [CB] open-source codebases (Directus, Vikunja, Elk, n8n, Nuxt UI, Element Plus, nuxt-security). Reviewing an app → [security review](security-review.md). Dependencies and CI → [supply chain](supply-chain.md).
+Source tags: [docs] Vue, Vite, Nuxt, DOMPurify, MDN docs · [OWASP] Top 10:2025, ASVS 5.0, Cheat Sheet Series · [IETF] RFC 10017 (OAuth for browser apps) · [GL] GitLab · [MO] Markus Oberlehner · [CB] open-source codebases (Directus, Vikunja, Elk, n8n, Nuxt UI, Element Plus, nuxt-security). Login, sessions and tokens → [auth](auth.md). LLM features → [AI features](ai-features.md). Reviewing an app → [security review](security-review.md). Dependencies and CI → [supply chain](supply-chain.md).
 
 Vue escapes `{{ }}` and attribute bindings. Every hole below is a place where code opts out of that, trusts the wrong party, or hands the browser something it will execute.
 
@@ -68,19 +68,6 @@ A `v-safe-html` directive wrapping `sanitizeHtml` keeps call sites free of `v-ht
 - Never `server.cors: true` or `server.allowedHosts: true`; don't widen `server.fs.allow`; keep `fs.strict` on. `server.fs.deny` has a long line of published bypasses (a dozen or more distinct techniques since 2022 — query strings, encodings, Windows paths, the HMR WebSocket), so treat a dev server reachable from a network as an open file read of the project, including `.env`. Keep Vite patched and never expose it with `--host` on a shared network.
 - The dev server is never a production server.
 
-## Authentication and sessions [IETF, OWASP, CB]
-
-- **Architecture first (RFC 10017).** The BFF pattern, where your backend is the OAuth client, holds the tokens and the browser holds only a session cookie to its own backend, is "strongly recommended for business applications, sensitive applications, and applications that handle personal data". Default to it. Nuxt server routes are a BFF; `nuxt-auth-utils` gives sealed session cookies with a server-only `secure` sub-object for tokens (`NUXT_SESSION_PASSWORD` ≥ 32 chars, set explicitly in production).
-- Tokens in the browser only when there is no backend to hold them, or when the same API serves non-browser clients (a desktop or CLI client). Then: authorization code + PKCE, tokens in memory, never refresh tokens in `localStorage`, and a hardened CSP because one XSS reads everything JS can read. The choice is an architecture, not a storage tip: "prefer cookies" alone doesn't answer it.
-- **Session cookie:** `__Host-session`, `Secure`, `HttpOnly`, `Path=/`, `SameSite=Lax`. `Strict` drops the cookie on the top-level redirect back from an identity provider or an email link, so users "log in" and land logged out. `SameSite=None` only for embedded widgets, and then with `Partitioned`.
-- **CSRF is partly frontend work.** The backend picks the scheme; the frontend attaches whatever it needs (a custom header on every mutating request, or a `__Host-` double-submit token) in **one** API-client interceptor, and never strips `Origin` or custom headers in a fetch wrapper. No state change is ever reachable by `GET`; `SameSite=Lax` doesn't stop those.
-- **OAuth/OIDC when the browser talks to the identity provider:** PKCE is a MUST for public clients; the implicit grant is SHOULD NOT (RFC 9700) and has no place in new code; `state` and `nonce` on every request; no tokens in URLs. Refresh tokens for public clients must be rotated per use or sender-constrained (DPoP/mTLS); with rotation, refresh single-flight: on 401, one refresh attempt, then redirect to login. An ID token's audience is the client (OpenID Connect Core), so it is never sent to an API as a bearer token; only access tokens are.
-- **Login forms:** real `<form>` fields with `autocomplete="username"` / `"current-password"` / `"new-password"`; paste allowed; no client-side length cap below 64; one generic failure message; no client-side lockout or attempt counting (rate limits are server-side, per account); forgot-password shows the same confirmation whether or not the account exists; MFA codes never logged or persisted.
-- **Passkeys:** `@simplewebauthn/browser` `startRegistration`/`startAuthentication` with options fetched from the backend, which also verifies the response. Feature-detect (`browserSupportsWebAuthn()`); add `webauthn` last in the username field's `autocomplete` for conditional UI.
-- **Authorization in the UI is display logic.** The server re-checks every request against the session's user. Never trust an id or a tenant the client sends (IDOR); opaque ids don't replace the check. Render permission-gated UI from a permission list the server sends, and refetch it on role or tenant change.
-- **Logout and lifecycle:** the server invalidates the session and answers with `Clear-Site-Data: "cache", "cookies", "storage"`; the client resets stores, the query cache and drafts holding personal data, and tells other tabs over `BroadcastChannel`. Session ids regenerate on login, MFA step-up and role change. Session timeout is server-enforced; the client only shows the warning. When a session expires mid-form, re-authenticate in a modal or keep the draft so the user's work survives.
-- `Cache-Control: no-store` on responses that carry session-specific data.
-
 ## SSR and Nuxt server routes [docs, OWASP]
 
 - Validate every server-route input with a schema: `readValidatedBody(event, schema.parse)`, `getValidatedQuery`, `getValidatedRouterParams`. Nuxt server routes are server code; all backend rules apply there (injection, authorization on every handler, rate limits, request size limits, SSRF allow-lists for outbound fetches).
@@ -106,17 +93,6 @@ A `v-safe-html` directive wrapping `sanitizeHtml` keeps call sites free of `v-ht
 - One scrub point (`beforeSend`, breadcrumb filter) removes tokens, passwords, session and CSRF ids and PII before anything reaches console, error tracker or session replay. Prompts and chat content are opt-in, never default.
 - Users see generic messages; raw API bodies (stack traces, internal ids, query fragments) never render (see [errors](errors.md)).
 - Strip newlines and delimiters from user-derived strings before logging them, or the aggregator gets log injection.
-
-## AI and LLM features [OWASP LLM Top 10, CB]
-
-OWASP LLM Top 10 category IDs below are the 2025 edition; a 2026 edition (published August 2026; PDF at genai.owasp.org) supersedes it and may renumber, so check IDs against it. Model output is attacker-influenceable through prompt injection even when the user is trusted.
-
-- **Rendering (LLM05):** model output goes through `renderMarkdown` above, never raw `v-html`. When streaming, render plain text until a block completes, or re-sanitize the **full accumulated buffer** on every chunk; a tag split across chunks defeats per-delta sanitizing. Links keep the scheme allow-list and forced `rel`; images are proxied through your backend or stripped (a model can emit a tracking or exfiltration URL); code blocks are inert text, and a "Run" action needs a click and a sandbox. Never build a route, path, selector or component name from model text; only backend-validated structured tool calls drive behaviour.
-- **Input and context (LLM01, LLM07, LLM08):** pasted, uploaded, fetched and retrieved content is shown in a visibly separate block from the assistant's own words, so injected instructions are visible as data. No user-editable field is prepended to the system prompt on the client; the backend owns it. Nothing in the production bundle, console or debug panel exposes the system prompt, tool schema or raw provider payloads. Show citations that link to the real source for retrieved claims (LLM09).
-- **Keys and transport (LLM02, LLM10):** never call a model provider from the browser with a key; stream through your backend so it can rate-limit, redact, audit and cut a stream. Quota state is server state.
-- **Agency (LLM06):** show a pending tool call (name and parameters) before it runs; require itemized confirmation naming the exact action, amount and target for destructive or financial actions; never auto-chain writes without a checkpoint; hide tools the role can't use (in addition to server enforcement); keep a visible log of executed actions.
-- **Limits (LLM10):** visible turn and token caps with a clear stop; send and regenerate disabled while streaming; paste and upload sizes capped before submit.
-- **Privacy (LLM02):** explicit consent before a document, screenshot or clipboard content enters a prompt, stating retention; chat history and drafts cleared on logout.
 
 ## Ask the backend [OWASP, IETF]
 
