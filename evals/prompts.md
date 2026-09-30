@@ -56,6 +56,6 @@ It creates a `create-vue` app (TypeScript, Router, Pinia, Vitest, Playwright, ES
 
 ## Results
 
-| Date | Tool and version | Skill version | T1–T5, N1 | E1 | E2 | E3 | E4 | E5 |
-|---|---|---|---|---|---|---|---|---|
-| | | | | | | | | |
+| Date | Tool and version | Model | Skill version | T1–T5, N1 | E1 | E2 | E3 | E4 | E5 |
+|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | |

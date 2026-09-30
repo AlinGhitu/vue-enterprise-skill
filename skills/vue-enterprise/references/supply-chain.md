@@ -42,7 +42,7 @@ trustPolicy: no-downgrade
 - Workflow-level `permissions: { contents: read }`; grant more per job only where needed.
 - Never run a fork's code under `pull_request_target` with secrets or write access in scope.
 - Lint the lockfile (`lockfile-lint --allowed-hosts npm --validate-https`) so nothing resolves off-registry or over HTTP.
-- Attest build provenance for deployed artifacts (`actions/attest-build-provenance`) and verify it where the artifact is consumed.
+- Attest build provenance for deployed artifacts (`actions/attest-build-provenance`) and verify it where the artifact is consumed (`gh attestation verify`). That meets SLSA v1.0 Build Level 2; building in a reusable workflow isolates the build from the calling workflow and meets Level 3.
 - Scan for secrets in the repo history and in the built `dist/` (gitleaks or trufflehog), and turn on GitHub push protection. A `VITE_` variable holding a real secret shows up in `dist/`.
 - Fail the build if `dist/` contains `.map` files unless the deploy step strips them (see [security](security.md)).
 

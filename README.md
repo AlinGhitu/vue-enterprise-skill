@@ -24,6 +24,16 @@ The skill loads only when a task matches its description. A short set of rules s
    @.github/instructions/vue.instructions.md
    ```
 
+The shipped `applyTo` covers every `.vue` and `.ts` file in the repository. When the repository also holds backend or tooling TypeScript, narrow it to the frontend, as comma-separated globs from the repository root:
+
+| Layout | `applyTo` |
+|---|---|
+| Vite app in `src/` | `"src/**/*.vue,src/**/*.ts"` |
+| Nuxt 4 | `"app/**/*.vue,app/**/*.ts,server/**/*.ts"` (the rules scope server routes to security only) |
+| Monorepo | `"apps/web/**/*.vue,apps/web/**/*.ts,packages/ui/**/*.vue,packages/ui/**/*.ts"` |
+
+Claude Code loads imported instructions for the whole session, whatever `applyTo` says; in a monorepo, put the `@` import in the frontend package's `CLAUDE.md` instead of the root one, so it loads only when Claude works in that folder.
+
 ## Use
 
 Both tools load the skill when a task involves Vue components, composables, Pinia stores, data fetching, routes, forms, Vue tests, Nuxt, or a Vue/Nuxt security review. You can also call it directly with `/vue-enterprise`.
