@@ -5,6 +5,7 @@ Get it working first, then measure, then optimize what measurement shows. Don't 
 ## Measure
 
 - Field data (Core Web Vitals at p75: LCP, INP, CLS) from real users beats a local Lighthouse run.
+- Targets are the "good" thresholds at p75, per device class: LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1. An optimization names the metric it moves and shows it before and after; a change that pushes a metric past its threshold needs a reason in the PR.
 - For update performance: the Vue DevTools performance timeline, `app.config.performance = true` (dev), and the Chrome performance panel.
 - Bundle size: `vite-bundle-visualizer` or `rollup-plugin-visualizer`; `npx nuxi analyze` in Nuxt. These only visualize.
 - **Enforce a budget in CI** with `size-limit` (`@size-limit/file` for built assets): a `.size-limit.json` entry per entry chunk (`[{ "path": "dist/assets/index-*.js", "limit": "180 kB" }]`), set a little above today's size. A change that crosses it fails the build and must either shrink or raise the limit with a reason in the PR.

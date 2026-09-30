@@ -27,8 +27,10 @@ From `checks/`:
 ```sh
 pnpm install --frozen-lockfile
 pnpm snippets   # regenerate the examples from the markdown
-pnpm check      # structure, snippet drift, vue-tsc, ESLint with the skill's rules, Vitest
+pnpm check      # structure, UTF-8/LF text, snippet drift, vue-tsc, ESLint with the skill's rules, Vitest
 ```
+
+CI also runs the Agent Skills reference validator, `skills-ref validate skills/vue-enterprise`, pinned to a commit in `.github/workflows/check.yml`.
 
 ## Releasing
 

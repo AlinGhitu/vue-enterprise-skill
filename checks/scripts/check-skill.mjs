@@ -1,5 +1,6 @@
 // Structural checks on the skill: frontmatter both Claude Code and Copilot accept, links that
-// resolve, an index that covers every reference file, a short always-on file, no tool names.
+// resolve, clean UTF-8 text, an index that covers every reference file, a short always-on file,
+// no tool names.
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -39,6 +40,25 @@ for (const file of files) {
     if (/^(https?:|mailto:|#)/.test(target)) continue
     const path = resolve(dirname(file), target.split('#')[0])
     if (!existsSync(path)) fail(`${file.slice(repo.length + 1)}: broken link ${target}`)
+  }
+}
+
+// Text is clean UTF-8 with LF line endings: no BOM, no NUL or other control bytes.
+const utf8 = new TextDecoder('utf-8', { fatal: true })
+for (const file of [...files, join(skill, 'assets', 'vue.instructions.md'), join(repo, 'CHANGELOG.md'), join(repo, 'evals', 'prompts.md')]) {
+  const name = file.slice(repo.length + 1)
+  let text
+  try {
+    text = utf8.decode(readFileSync(file))
+  } catch {
+    fail(`${name} is not valid UTF-8`)
+    continue
+  }
+  const bad = /[\x00-\x08\x0B-\x1F\x7F﻿]/.exec(text)
+  if (bad) {
+    const line = text.slice(0, bad.index).split('\n').length
+    const code = bad[0].codePointAt(0).toString(16).toUpperCase().padStart(4, '0')
+    fail(`${name}:${line} contains U+${code}${bad[0] === '\r' ? ' (CRLF line ending)' : ''}`)
   }
 }
 
