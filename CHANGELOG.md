@@ -7,7 +7,8 @@ The skill follows semantic versioning. A major version changes a rule an agent w
 - **Security review:** findings map to OWASP ASVS 5.0.0 as well as the Top 10. Checklist headings name the ASVS sections, items that match one requirement carry its ID (`v5.0.0-3.5.5`), and agents cite a requirement ID only after reading it in the ASVS text.
 - **Performance:** Core Web Vitals targets at p75 (LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1); optimizations show the metric they move.
 - **Supply chain:** build provenance attestations and the SLSA Build Level they reach; `gh attestation verify` on the consuming side.
-- **README:** narrower `applyTo` globs for repositories that also hold backend TypeScript, and where to put the Claude Code import in a monorepo.
+- **Always-on rules:** `assets/variants/` ships Vite, Nuxt 4 and monorepo copies of `vue.instructions.md` with a narrower `applyTo`, for repositories that also hold backend TypeScript. The README says which to pick and where to put the Claude Code import in a monorepo. CI fails when a variant drifts from the default.
+- **Compatibility:** says plainly that no agent runs are recorded yet, instead of implying tested versions.
 - **Checks:** every skill file must be valid UTF-8 with LF line endings and no BOM or control bytes; `.gitattributes` keeps text files LF. CI also runs `skills-ref validate` from the Agent Skills project. `evals/prompts.md` results record the model. Removed the stray NUL bytes that 1.0.2 left in eight reference files.
 
 ## 1.0.2 — 2026-09-28

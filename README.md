@@ -24,15 +24,16 @@ The skill loads only when a task matches its description. A short set of rules s
    @.github/instructions/vue.instructions.md
    ```
 
-The shipped `applyTo` covers every `.vue` and `.ts` file in the repository. When the repository also holds backend or tooling TypeScript, narrow it to the frontend, as comma-separated globs from the repository root:
+The default file applies to every `.vue` and `.ts` file in the repository. When the repository also holds backend or tooling TypeScript, copy a variant from `skills/vue-enterprise/assets/variants/` instead. The rules are identical; only `applyTo` differs:
 
-| Layout | `applyTo` |
-|---|---|
-| Vite app in `src/` | `"src/**/*.vue,src/**/*.ts"` |
-| Nuxt 4 | `"app/**/*.vue,app/**/*.ts,server/**/*.ts"` (the rules scope server routes to security only) |
-| Monorepo | `"apps/web/**/*.vue,apps/web/**/*.ts,packages/ui/**/*.vue,packages/ui/**/*.ts"` |
+| Variant | Layout | `applyTo` |
+|---|---|---|
+| `vue.instructions.md` (default) | Vue-only repository, Nuxt 3 layout | `**/*.vue,**/*.ts` |
+| `variants/vite/` | Vite app in `src/`, Playwright in `e2e/` | `src/**/*.vue,src/**/*.ts,e2e/**/*.ts` |
+| `variants/nuxt/` | Nuxt 4 (`app/`, `server/`, `shared/`) | `app/**/*.vue,app/**/*.ts,server/**/*.ts,shared/**/*.ts` |
+| `variants/monorepo/` | Frontend in `apps/web`, components in `packages/ui` | `apps/web/**/*.vue,apps/web/**/*.ts,packages/ui/**/*.vue,packages/ui/**/*.ts`: edit the paths to your packages |
 
-Claude Code loads imported instructions for the whole session, whatever `applyTo` says; in a monorepo, put the `@` import in the frontend package's `CLAUDE.md` instead of the root one, so it loads only when Claude works in that folder.
+Claude Code loads imported instructions for the whole session, whatever `applyTo` says. In a monorepo, put the `@` import in the frontend package's `CLAUDE.md` instead of the root one, so it loads only when Claude works in that folder.
 
 ## Use
 
@@ -41,7 +42,7 @@ Both tools load the skill when a task involves Vue components, composables, Pini
 ## Compatibility
 
 - **Supported:** Claude Code, and GitHub Copilot in VS Code agent mode, Copilot CLI and the Copilot cloud (coding) agent. The skill uses the open Agent Skills format with only the `name` and `description` frontmatter fields, which every one of these tools accepts. No scripts; every reference path is relative to the skill folder.
-- **Tested versions:** checked against each tool's docs on 2026-09-24; tested tool versions are recorded here after running the trigger tests in `evals/prompts.md`.
+- **Tested versions:** none recorded yet. Support is based on each tool's documentation as of 2026-09-24; agent runs (tool version, model, skill version, date, result) are recorded in [evals/prompts.md](evals/prompts.md).
 - **Known differences:**
   - Loading. Both tools load the skill when its description matches the task, or when it's invoked as `/vue-enterprise`. Each decides relevance its own way, so the same prompt can load it in one tool and not the other. If it doesn't load, name the skill in the prompt.
   - Always-on rules. Copilot applies `.github/instructions/vue.instructions.md` only to `.vue` and `.ts` files it reads or edits. Claude Code loads the same file at session start when the project's `AGENTS.md` or `CLAUDE.md` imports it.
@@ -57,7 +58,7 @@ Don't edit the installed skill: updates would overwrite your changes. Put additi
 skills/vue-enterprise/
 ├── SKILL.md                 entry point: which rule wins, workflow, reference index, version
 ├── references/              detailed guidance, loaded on demand
-└── assets/vue.instructions.md
+└── assets/                  vue.instructions.md (always-on rules) and variants/ with narrower applyTo
 checks/                      CI project that validates the skill and its examples
 evals/                       setup script and manual prompts to check agent behaviour per tool
 ```
