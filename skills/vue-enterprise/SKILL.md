@@ -114,4 +114,4 @@ A sub-agent doesn't inherit this skill. Give it the paths of the reference files
 
 ## Version
 
-1.0.2 · Last checked against the official docs: 2026-09-24. After 2027-03-24, treat the pinned version numbers as unverified: check `package.json` and the official docs before relying on one.
+1.1.0 · Last checked against the official docs: 2026-09-24. After 2027-03-24, treat the pinned version numbers as unverified: check `package.json` and the official docs before relying on one.
