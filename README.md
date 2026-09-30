@@ -6,25 +6,41 @@ Every rule is checked against the official Vue, Pinia, Pinia Colada, Vue Router 
 
 ## Install
 
-Put the skill into your app repository at `.claude/skills/vue-enterprise/`. Claude Code reads skills only from `.claude/skills/`, and Copilot reads that folder as well, so one copy serves both tools.
+Run these from the root of your app repository.
 
-```sh
-git clone https://github.com/AlinGhitu/vue-enterprise-skill.git
-cp -r vue-enterprise-skill/skills/vue-enterprise <your-app>/.claude/skills/
-```
-
-## Add the always-on rules (recommended)
-
-The skill loads only when a task matches its description. A short set of rules should apply to every Vue edit, so install them as instructions:
-
-1. Copy `skills/vue-enterprise/assets/vue.instructions.md` to `<your-app>/.github/instructions/vue.instructions.md`. Copilot then applies it to every `.vue` and `.ts` file it reads or edits.
-2. Add this line to your app's `AGENTS.md` (or `CLAUDE.md`), so Claude Code loads the same file:
+1. Copy the skill to `.claude/skills/vue-enterprise/`. Claude Code reads skills only from `.claude/skills/`; Copilot reads that folder too (as well as `.github/skills/` and `.agents/skills/`), so one copy serves both tools.
+2. Copy the always-on rules to `.github/instructions/vue.instructions.md`. The skill loads only when a task matches its description; these rules apply to every `.vue` and `.ts` edit. In a repository that also holds backend TypeScript, copy a [narrower variant](#narrower-scope-for-mixed-repositories) instead.
+3. For Claude Code, add this line to your app's `AGENTS.md` (or `CLAUDE.md`) so it loads the same rules. Copilot needs no extra step.
 
    ```md
    @.github/instructions/vue.instructions.md
    ```
 
-The default file applies to every `.vue` and `.ts` file in the repository. When the repository also holds backend or tooling TypeScript, copy a variant from `skills/vue-enterprise/assets/variants/` instead. The rules are identical; only `applyTo` differs:
+4. Commit both folders. The Copilot cloud agent and Copilot code review read only what is in the repository; code review uses the versions on the pull request's branch.
+
+macOS, Linux, Git Bash:
+
+```sh
+git clone --depth 1 https://github.com/AlinGhitu/vue-enterprise-skill.git /tmp/vue-enterprise-skill
+mkdir -p .claude/skills .github/instructions
+cp -r /tmp/vue-enterprise-skill/skills/vue-enterprise .claude/skills/
+cp /tmp/vue-enterprise-skill/skills/vue-enterprise/assets/vue.instructions.md .github/instructions/
+```
+
+Windows PowerShell:
+
+```powershell
+git clone --depth 1 https://github.com/AlinGhitu/vue-enterprise-skill.git "$env:TEMP\vue-enterprise-skill"
+New-Item -ItemType Directory -Force .claude\skills, .github\instructions | Out-Null
+Copy-Item -Recurse "$env:TEMP\vue-enterprise-skill\skills\vue-enterprise" .claude\skills\
+Copy-Item "$env:TEMP\vue-enterprise-skill\skills\vue-enterprise\assets\vue.instructions.md" .github\instructions\
+```
+
+To update, delete `.claude/skills/vue-enterprise/`, copy the new version in the same way, and copy `vue.instructions.md` again. Check [CHANGELOG.md](CHANGELOG.md) for what changed.
+
+### Narrower scope for mixed repositories
+
+The default `vue.instructions.md` applies to every `.vue` and `.ts` file in the repository. When the repository also holds backend or tooling TypeScript, copy a variant from `skills/vue-enterprise/assets/variants/` instead. The rules are identical; only `applyTo` differs:
 
 | Variant | Layout | `applyTo` |
 |---|---|---|
@@ -37,7 +53,21 @@ Claude Code loads imported instructions for the whole session, whatever `applyTo
 
 ## Use
 
-Both tools load the skill when a task involves Vue components, composables, Pinia stores, data fetching, routes, forms, Vue tests, Nuxt, or a Vue/Nuxt security review. You can also call it directly with `/vue-enterprise`.
+The skill loads by itself when a task involves Vue components, composables, Pinia stores, data fetching, routes, forms, Vue tests, Nuxt, or a Vue/Nuxt security review. To force it, start the prompt with `/vue-enterprise`.
+
+**GitHub Copilot in VS Code**
+
+- Use Copilot Chat in agent mode.
+- Skills and `applyTo` instructions are on by default. If nothing loads, check that the settings `chat.useAgentSkills` and `chat.includeApplyingInstructions` are enabled.
+- Type `/` in the chat input to see `vue-enterprise` in the list.
+- To confirm it loaded, expand **References** under Copilot's answer and look for `SKILL.md` and `vue.instructions.md`. For more detail, run **Developer: Open Agent Debug Logs** from the Command Palette.
+
+**Copilot CLI**
+
+- `/skills list` shows the skills it found; `/skills info vue-enterprise` shows where it loaded this one from.
+- After copying in a new version, run `/skills reload`.
+
+**Copilot cloud agent and code review** pick up the committed skill and instructions with no setup. Code review can't run commands, so it lists the checks for the author to run.
 
 ## Compatibility
 
@@ -46,7 +76,6 @@ Both tools load the skill when a task involves Vue components, composables, Pini
 - **Known differences:**
   - Loading. Both tools load the skill when its description matches the task, or when it's invoked as `/vue-enterprise`. Each decides relevance its own way, so the same prompt can load it in one tool and not the other. If it doesn't load, name the skill in the prompt.
   - Always-on rules. Copilot applies `.github/instructions/vue.instructions.md` only to `.vue` and `.ts` files it reads or edits. Claude Code loads the same file at session start when the project's `AGENTS.md` or `CLAUDE.md` imports it.
-  - Copilot code review reads the skill and instructions but can't run commands. It lists the "Done means" checks for the author instead.
 
 ## Adapting it to your organization
 
