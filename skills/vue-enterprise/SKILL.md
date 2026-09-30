@@ -121,7 +121,7 @@ When you hand part of a Vue task to a sub-agent (audits, parallel file reviews, 
 ## Compatibility
 
 - **Supported:** Claude Code, and GitHub Copilot in VS Code agent mode, Copilot CLI and the Copilot cloud (coding) agent. It uses the open Agent Skills format with only the `name` and `description` frontmatter fields, which every one of these tools accepts. No scripts; every reference path is relative to this folder.
-- **Tested versions:** checked against each tool's docs on 2026-09-24; record the versions you tested here after running the trigger tests.
+- **Tested versions:** none recorded yet. Support is based on each tool's documentation as of 2026-09-24; agent runs (tool version, model, skill version, date, result) are recorded in `evals/prompts.md` in the skill's repository.
 - **Known differences:**
   - Loading. Both tools load the skill when its description matches the task, or when it's invoked as `/vue-enterprise`. Each decides relevance its own way, so the same prompt can load it in one tool and not the other. If it doesn't load, name the skill in the prompt.
   - Always-on rules. Copilot applies `.github/instructions/vue.instructions.md` only to `.vue` and `.ts` files it reads or edits. Claude Code loads the same file at session start when the project's `AGENTS.md` or `CLAUDE.md` imports it (`@.github/instructions/vue.instructions.md`). A copy to install ships in `assets/vue.instructions.md`.

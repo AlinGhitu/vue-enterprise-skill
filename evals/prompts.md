@@ -56,6 +56,8 @@ It creates a `create-vue` app (TypeScript, Router, Pinia, Vitest, Playwright, ES
 
 ## Results
 
+No runs recorded yet. Add a row for every run, failures included. Tool and version is the exact build (`claude --version`, the VS Code and Copilot Chat extension versions, `copilot --version`). In each prompt column write `pass` when every box is ticked, otherwise the unticked boxes (`E3: 2/3, no scheme check`).
+
 | Date | Tool and version | Model | Skill version | T1–T5, N1 | E1 | E2 | E3 | E4 | E5 |
 |---|---|---|---|---|---|---|---|---|---|
 | | | | | | | | | | |

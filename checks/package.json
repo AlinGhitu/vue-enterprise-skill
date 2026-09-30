@@ -4,11 +4,12 @@
   "type": "module",
   "scripts": {
     "snippets": "node scripts/extract-snippets.mjs",
+    "variants": "node scripts/variants.mjs",
     "skill": "node scripts/check-skill.mjs",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --max-warnings 0 .",
     "test": "vitest run",
-    "check": "node scripts/check-skill.mjs && node scripts/extract-snippets.mjs --check && vue-tsc --noEmit && eslint --max-warnings 0 . && vitest run"
+    "check": "node scripts/check-skill.mjs && node scripts/extract-snippets.mjs --check && node scripts/variants.mjs --check && vue-tsc --noEmit && eslint --max-warnings 0 . && vitest run"
   },
   "dependencies": {
     "@pinia/colada": "^1.4.5",

@@ -6,6 +6,7 @@ This repository publishes `vue-enterprise`, an Agent Skill with Vue 3 + TypeScri
 
 - `skills/vue-enterprise/` is the skill: `SKILL.md`, `references/`, and `assets/vue.instructions.md`, the always-on rules that users copy into their app.
 - `checks/` is a small Vue project that CI uses to validate the skill. `scripts/snippets.mjs` lists which code blocks are extracted from the references; the generated files carry a `GENERATED` header and must never be edited by hand.
+- `skills/vue-enterprise/assets/variants/` holds copies of `vue.instructions.md` with a narrower `applyTo`, written by `checks/scripts/variants.mjs`. Edit the default file, then run `pnpm variants`; never edit a variant by hand.
 - `evals/` holds `setup.mjs`, which builds a Vue app with the skill installed, and `prompts.md`, the manual prompts for checking agent behaviour in each tool.
 - `CHANGELOG.md` records every release.
 
@@ -26,7 +27,8 @@ From `checks/`:
 ```sh
 pnpm install --frozen-lockfile
 pnpm snippets   # regenerate the examples from the markdown
-pnpm check      # structure, UTF-8/LF text, snippet drift, vue-tsc, ESLint with the skill's rules, Vitest
+pnpm variants   # regenerate the applyTo variants of vue.instructions.md
+pnpm check      # structure, UTF-8/LF text, snippet and variant drift, vue-tsc, ESLint with the skill's rules, Vitest
 ```
 
 CI also runs the Agent Skills reference validator, `skills-ref validate skills/vue-enterprise`, pinned to a commit in `.github/workflows/check.yml`.
