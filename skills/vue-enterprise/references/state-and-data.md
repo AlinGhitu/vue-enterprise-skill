@@ -1,10 +1,8 @@
 # Client state
 
-Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / VueUse · [VS] Vue School · [MO] Markus Oberlehner · [GL] GitLab · [CB] open-source codebases.
-
 This file covers state the client owns. Data fetched from a server is a cache: see [server data](server-data.md).
 
-## Where state lives [MT, VS, MO, GL]
+## Where state lives
 
 Keep **state distance** short: state sits at the lowest component above every consumer. The fewer components that *could* read or change a piece of state, the fewer places to look when it's wrong.
 
@@ -25,7 +23,7 @@ First classify it: **interaction state** (`isOpen`, `isSubmitting`, selection) o
 - Events mirror state: emit at the level where the state lives.
 - Constants and server-injected config aren't state: put them in a constants module or `app.provide`, not in a store.
 
-## provide / inject [docs, AF, VS, MO, CB]
+## provide / inject
 
 - Type every key: `export const TabsKey: InjectionKey<TabsContext> = Symbol('tabs')`. Keep keys in a `.ts` module (or a plain `<script lang="ts">` block next to the provider). Import the **same** key object at both ends; string keys collide.
 - Distinguish **required** from **optional** context:
@@ -39,7 +37,7 @@ First classify it: **interaction state** (`isOpen`, `isSubmitting`, selection) o
 - `inject()` outside components (router guards, plugins) works via `app.runWithContext(fn)` (3.3+).
 - ⚖ Thiessen argues provide/inject "isn't DI" and increases coupling; the docs present it for injecting services. This skill uses it for subtree context and plugin-provided services, and prefers props for plain data.
 
-## Pinia [docs, VS, AF, GL, CB]
+## Pinia
 
 - **Pinia 4** is current: ESM-only, and `@vue/devtools-api` must be installed alongside it. Store code is unchanged from Pinia 3.
 - Split stores by domain and by task (an items store and a form-draft store for the same feature). Keep state, getters and actions in one file per store. A store file that grows too big is the signal to split.
@@ -61,7 +59,7 @@ if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useInvoiceStore, imp
 
 - Clear all client state on logout or user switch: `$reset()` every store and clear the query cache. Otherwise the next user of the tab sees the previous user's data.
 
-## SSR-safe state [docs, AF, VS]
+## SSR-safe state
 
 - No module-level mutable state: it's shared across requests. Create state per app instance (Pinia, `app.provide` in a plugin factory).
 - No `window`/`document`/timers in setup on the server. Use `onMounted`, or check `import.meta.env.SSR`.

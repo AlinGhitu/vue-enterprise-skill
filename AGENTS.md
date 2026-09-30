@@ -16,8 +16,9 @@ This repository publishes `vue-enterprise`, an Agent Skill with Vue 3 + TypeScri
 - The `name` field must equal the folder name, `vue-enterprise`.
 - Write steps as intent ("search the codebase for existing composables"), never as a tool name.
 - Links are relative to the skill folder. Don't add scripts that need a particular agent to run them.
+- `SKILL.md` loads in full whenever the skill does, so it holds only what every task acts on. Provenance, tool differences and maintainer details go in the README; guidance only some tasks need goes in a reference file behind a row in the index.
 - Keep `assets/vue.instructions.md` under 30 lines. It carries only rules that apply to almost every Vue edit; everything else goes in the skill.
-- Every rule traces to a source. Where sources disagree, mark the rule ⚖ and give the reason in the same line. Keep survey statistics and the history of a rule out of the skill text; agents can't act on them.
+- Every rule traces to a source, recorded in the maintainer notes rather than the skill: reference files carry no source tags. Where sources disagree, mark the rule ⚖ and give the reason in the same line. Keep survey statistics and the history of a rule out of the skill text; agents can't act on them.
 - Code examples must obey the skill's own rules: no `any`, no `as Error`, explicit return types on exports, no native event names in `emits`. When you add or change a `ts`, `vue` or `js` code block, add it to `checks/scripts/snippets.mjs` if it isn't there, then run the checks.
 
 ## Checking a change
@@ -37,4 +38,4 @@ CI also runs the Agent Skills reference validator, `skills-ref validate skills/v
 
 1. Bump the version in the `SKILL.md` footer (semver: major when an agent would follow a rule differently, minor for new guidance, patch for fixes) and update "Last checked" when you re-verified facts against the docs.
 2. Add a `CHANGELOG.md` entry.
-3. Run `evals/prompts.md` in each supported tool and record the results there and in the `SKILL.md` compatibility note.
+3. Run `evals/prompts.md` in each supported tool and record the results there and in the README "Compatibility" section.

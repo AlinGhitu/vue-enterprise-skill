@@ -1,16 +1,14 @@
 # Composables
 
-Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / VueUse · [VS] Vue School · [MO] Markus Oberlehner · [GL] GitLab · [CB] open-source codebases.
-
-## Check VueUse first [AF]
+## Check VueUse first
 
 Before writing a composable for events, observers, storage, media queries, clipboard, debounce/throttle, timers, element size or visibility, check whether VueUse has it (`useEventListener`, `useStorage`, `useIntersectionObserver`, `useDebounceFn`, `watchDebounced`, `useElementSize` …). It already handles cleanup and SSR. Load the `vueuse-functions` skill when it is available; the replacement table, the cases where this skill's rules win (server data, app-wide state, event buses, v-model), and the dependency check are in [vueuse-mapping](vueuse-mapping.md). If the project doesn't depend on VueUse, propose adding it, or copy the one composable you need with a comment linking its upstream source.
 
-## Design the call site first [MT]
+## Design the call site first
 
 Write the component code that *uses* the composable before implementing it. Settle three things from real call sites: the arguments (ref or raw, single or many), the options, and the return shape. Build only what current callers need.
 
-## The contract [docs, AF, MT]
+## The contract
 
 The shape below applies to every composable. The example fetches data only because that's the familiar case. **For server data, use Pinia Colada** ([server data](server-data.md)); write a fetch composable like this one only in a project without a query library.
 
@@ -61,13 +59,13 @@ export function useInvoice(
 - **Readonly state:** when changes must go through the composable's functions, return `readonly(state)` plus mutators.
 - **Watch options passthrough:** a composable that watches internally should accept `immediate`/`flush` and pass them on.
 
-## Thin composables [MT]
+## Thin composables
 
 Put business rules in pure functions (`calculateInvoiceTotal(lines)`); the composable only wires reactivity around them. Unit-test the pure functions without Vue; the composable stays too thin to break.
 
-For state that changes through several named actions, or whose next value depends on the previous one, go one step further: a pure `reducer(state, action)` plus a composable that returns `readonly(state)` and `dispatch`. All transitions then live in one Vue-free, trivially testable function. [MO]
+For state that changes through several named actions, or whose next value depends on the previous one, go one step further: a pure `reducer(state, action)` plus a composable that returns `readonly(state)` and `dispatch`. All transitions then live in one Vue-free, trivially testable function.
 
-## Side effects and cleanup [docs, AF]
+## Side effects and cleanup
 
 - Whatever the composable starts (listeners, timers, observers, sockets, requests), it stops. Use `onScopeDispose` (works in components and in `effectScope`) or VueUse `tryOnScopeDispose`, and `onWatcherCleanup` for per-run cleanup.
 - DOM and browser access goes in `onMounted` or behind a guard. For SSR and tests, accept injectable globals (`{ window = defaultWindow }` where `defaultWindow` is `undefined` on the server).
@@ -77,20 +75,20 @@ For state that changes through several named actions, or whose next value depend
 - Prefer taking callbacks as arguments over registering hooks the caller can't see. When a hook is necessary, the same composable cleans up after it.
 - Never use `getCurrentInstance()` to reach the component (for `emit`, props or the instance). Take what you need as arguments; `getCurrentInstance` is an internal escape hatch and returns `null` under Vapor.
 
-## Async composables [AF, MT, docs]
+## Async composables
 
 - **Async → sync:** create the refs, start the work without `await`, return the refs immediately, fill them later. Include `isLoading`/`error`.
 - Optionally make the return also awaitable (VueUse returns `state & PromiseLike<state>`) so it works under `<Suspense>` and in scripts.
 - Cancel superseded requests (an `AbortController` per request, as in the contract above) so an older response can't overwrite a newer one.
 - For server data, a query library (Pinia Colada) replaces most hand-written async composables; see [server data](server-data.md).
 
-## Shared state composables [MT, AF, docs]
+## Shared state composables
 
 - **Data store pattern:** module-level state + a composable returning `readonly` state and mutators. ⚖ Thiessen recommends it for client-only apps. This skill doesn't: module state leaks between SSR requests (docs), bleeds between tests, and gets duplicated when two bundles load the module (GitLab). Use Pinia, or create the state per app in a plugin (`app.provide` with a typed key).
 - For state scoped to a component subtree, VueUse `createInjectionState` gives a typed provide/use pair.
 - `createSharedComposable` (VueUse) shares one instance across all callers and disposes it when the last caller unmounts. Useful for expensive listeners (`useMouse` app-wide).
 
-## Splitting [MT]
+## Splitting
 
 - Split mutually exclusive code paths into separate composables instead of one composable with a mode flag.
 - Composables compose: build `useFilteredList` from `useFilter` and `useSort`.

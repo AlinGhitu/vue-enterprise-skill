@@ -1,6 +1,6 @@
 # Evaluation prompts
 
-Run these by hand in each supported tool (Claude Code, and Copilot in VS Code agent mode) before each release. Record the tool, its version, the model, the skill version and pass/fail per check in the table at the bottom, then put the tested versions in the SKILL.md compatibility note.
+Run these by hand in each supported tool (Claude Code, and Copilot in VS Code agent mode) before each release. Record the tool, its version, the model, the skill version and pass/fail per check in the table at the bottom, then put the tested versions in the README compatibility section.
 
 ## Setup
 

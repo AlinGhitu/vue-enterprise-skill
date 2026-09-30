@@ -1,6 +1,6 @@
 # Security review procedure
 
-Use this when asked to review a Vue or Nuxt app (or a change to one) for security. The rules being checked live in [security](security.md), [supply-chain](supply-chain.md) and [server data](server-data.md); this file is the procedure and the report format.
+Use this when asked to review a Vue or Nuxt app (or a change to one) for security. The rules being checked live in [security](security.md), [auth](auth.md), [AI features](ai-features.md), [supply-chain](supply-chain.md) and [server data](server-data.md); this file is the procedure and the report format.
 
 ## Ground rules
 
@@ -8,7 +8,7 @@ Use this when asked to review a Vue or Nuxt app (or a change to one) for securit
 2. Every finding carries a specific, actionable fix.
 3. Critical and High findings include a proof of concept or a concrete exploitation scenario (the input, the path it takes, the effect).
 4. Name good practices you saw. A review that only lists problems trains people to hide things.
-5. OWASP Top 10:2025 is the minimum baseline; for AI features, add the OWASP LLM Top 10. Map each finding to OWASP ASVS 5.0.0 as well: cite a requirement as `v5.0.0-<chapter>.<section>.<requirement>` (`v5.0.0-3.5.5`) only after reading it in the ASVS text (github.com/OWASP/ASVS, `5.0/en`), otherwise cite the section (`ASVS V3.5`). The IDs in this file were checked against 5.0.0.
+5. Baseline: OWASP Top 10:2025, plus the OWASP LLM Top 10 for AI features. Also map findings to ASVS 5.0.0: cite a requirement (`v5.0.0-3.5.5`) only after reading it in the ASVS text (github.com/OWASP/ASVS, `5.0/en`), otherwise the section (`ASVS V3.5`).
 6. Review dependencies and CI, not just app code.
 7. Never propose disabling a security control as a fix (turning off CSP, adding `unsafe-eval`, widening `server.fs.allow`, skipping sanitization). Fix the code that conflicts with the control.
 8. Start from trust boundaries and reason with STRIDE before enumerating findings.

@@ -1,7 +1,5 @@
 # VueUse mapping
 
-Source tags: [docs] vueuse.org function pages (via the `vueuse-functions` skill) · [AF] VueUse guidelines · [CB] open-source codebases.
-
 How this file relates to the `vueuse-functions` skill: that skill owns **which** composable fits and **how** to call it (its per-function pages carry usage and type declarations; load it when it is available). This file owns the enterprise side: what to replace, what not to replace, and the checks before adding the dependency. When `vueuse-functions` isn't installed, the tables here plus vueuse.org are enough to proceed.
 
 ## Before using VueUse in a project
@@ -59,8 +57,8 @@ VueUse covers these, but the skill's architecture rules win:
 | `useEventBus` | Props, events, provide/inject, a store, or a query invalidation | Event buses hide data flow; the same rule removes `$on`/`$off` in [migration](migration.md) |
 | `useVModel`, `useVModels` | `defineModel` (Vue ≥ 3.4) | VueUse's own page recommends `defineModel`; keep `useVModel` for TSX or `deep: true` only |
 | `useUrlSearchParams` in a Vue Router app | `useRouteQuery` from `@vueuse/router` | Two owners of the URL fight each other |
-| `useStorage` for tokens, sessions or PII | The BFF session cookie ([security](security.md)) | Storage is readable by any script on the origin |
-| `useCookies`, `useJwt` for auth state | The auth adapter ([security](security.md)) | Decoding a token client-side isn't validating it |
+| `useStorage` for tokens, sessions or PII | The BFF session cookie ([auth](auth.md)) | Storage is readable by any script on the origin |
+| `useCookies`, `useJwt` for auth state | The auth adapter ([auth](auth.md)) | Decoding a token client-side isn't validating it |
 | `useTemplateRefsList` | `useTemplateRef` (Vue ≥ 3.5) for single refs; keep it only for `v-for` refs | The built-in infers the element type |
 | `toRef`, `get`, `set` from VueUse | Vue's `toRef`, `toValue`, `.value` | Marked EXPLICIT_ONLY in `vueuse-functions` too |
 | `useTitle` in Nuxt | `useHead` / `useSeoMeta` | Nuxt owns the head |

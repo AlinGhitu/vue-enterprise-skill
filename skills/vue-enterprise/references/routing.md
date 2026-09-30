@@ -1,14 +1,12 @@
 # Routing
 
-Source tags: [docs] router.vuejs.org / vuejs.org / Pinia Colada · [VS] Vue School · [GL] GitLab · [CB] open-source codebases.
-
-## Version [docs]
+## Version
 
 - **Vue Router 5** is current. Without file-based routing, upgrading from 4 is drop-in; do that rather than adding the deprecated, archived `unplugin-vue-router`.
 - Typed file-based routing is built into v5 and stable (`vue-router/vite`, `vue-router/auto-routes`).
 - Don't adopt `experimental_createRouter` or param parsers (`[id=int].vue`): the docs mark them not production-ready.
 
-## Route definitions [docs, VS, GL]
+## Route definitions
 
 - **File-based (preferred for new apps, typed automatically):** add `VueRouter()` from `vue-router/vite` **before** `vue()` in the Vite plugins, import `routes` from `vue-router/auto-routes`, and commit the generated route-map `.d.ts`. `useRoute('/invoices/[id]')` gives typed params; add the Volar plugins `vue-router/volar/sfc-typed-router` and `vue-router/volar/sfc-route-blocks` so a bare `useRoute()` inside a page component is typed for that page too. Keep `src/pages/` files thin: they render a feature's controller component.
 - Page meta goes in `definePage({ meta })`. It's extracted at build time, so it can't reference variables or hold `beforeEnter`; use a global guard driven by `meta`. Route groups (`(admin)/`) organize files without adding a URL segment; to give a whole group shared meta, add it in the plugin's `beforeWriteFiles()` hook (`addToMeta`).
@@ -19,12 +17,12 @@ Source tags: [docs] router.vuejs.org / vuejs.org / Pinia Colada · [VS] Vue Scho
 - Route HMR with file-based routing: `if (import.meta.hot) handleHotUpdate(router)`.
 - Group chunks with Vite `manualChunks` only when profiling shows a need.
 
-## Layouts [VS]
+## Layouts
 
 - Choose the layout from `route.meta.layout` through a lookup table. Nested routes with a layout parent only when the section shell must keep state between child routes.
 - Nuxt: `definePageMeta({ layout })`.
 
-## Guards [docs]
+## Guards
 
 - Return a value instead of calling `next`: `false` cancels, a route location redirects, nothing (or `true`) continues. `async` guards are awaited. Legacy guards using `next` must call it exactly once on every path.
 - Global auth check in `router.beforeEach`, driven by `to.meta.requiresAuth`, not scattered `beforeEnter` hooks.
@@ -33,7 +31,7 @@ Source tags: [docs] router.vuejs.org / vuejs.org / Pinia Colada · [VS] Vue Scho
 - Unsaved-changes prompts go in `onBeforeRouteLeave` in the form's component.
 - Register `router.onError` and report from it: failed lazy-route chunk loads (often right after a deploy) and navigation errors surface there, not in component error boundaries.
 
-## Loading data for a route [docs]
+## Loading data for a route
 
 - **Parse params in the page, once.** Params arrive as strings (`string | string[]` on an untyped route) and may not match your id format. Read them through a typed route (`useRoute('/invoices/[id]')`); an untyped `route.params.id` is an index-signature read that `noPropertyAccessFromIndexSignature` rejects. The page parses them, renders NotFound for an invalid value, and passes a typed prop to the feature's controller component. `String(route.params.id)` is coercion, not parsing: it turns `['a', 'b']` into `'a,b'`.
 
@@ -69,7 +67,7 @@ const invoiceId = computed(() => parseInvoiceId(route.params.id))
 - Parse query-string values the same way (`z.coerce.number().int().positive().catch(1)` for a page number; see [typescript](typescript.md)).
 - Sync filter/sort/page state to the query string (`useRouteQuery` from `@vueuse/router`) so views are shareable and survive refresh.
 
-## Data loaders (experimental) [docs]
+## Data loaders (experimental)
 
 Data loaders (`vue-router/experimental`) are **experimental**: the import path says so, and the RFC is still open. Use them only when the team explicitly accepts an experimental API. When adopted:
 
@@ -81,14 +79,14 @@ Data loaders (`vue-router/experimental`) are **experimental**: the import path s
 
 Why not `<Suspense>` + top-level `await` for page data: it fetches nested routes sequentially, can't redirect or cancel navigation, has no cache or dedupe, and Suspense itself is experimental.
 
-## Dialogs as routes [CB]
+## Dialogs as routes
 
 - Detail modals that should be linkable and close on Back render as a child route over the list. Closing navigates back; the list stays mounted underneath.
 
-## Accessibility [docs]
+## Accessibility
 
 - On route change, move focus to a skip link or the main heading, and update `document.title`. Screen readers don't announce SPA navigation on their own.
 
-## Testing [GL, docs]
+## Testing
 
 - Navigation is async: `await router.push(…)` and `await router.isReady()` before asserting. Push a route that exists before mounting. Setting `window.location` does nothing.

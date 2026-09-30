@@ -141,7 +141,7 @@ export const snippets = [
     out: 'test/withSetup.ts',
   },
   {
-    md: 'typescript.md',
+    md: 'typescript-config.md',
     match: '// src/types/vue.d.ts: declare data-* attributes for strictTemplates',
     out: 'src/types/vue.d.ts',
   },

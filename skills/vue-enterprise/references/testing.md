@@ -1,8 +1,6 @@
 # Testing
 
-Source tags: [docs] vuejs.org / test-utils / Pinia / Pinia Colada · [MT] Michael Thiessen · [VS] Vue School · [AF] Anthony Fu · [MO] Markus Oberlehner · [GL] GitLab · [CB] open-source codebases.
-
-## What to test where [docs, MT, VS, MO, GL]
+## What to test where
 
 Choose the mix per project; no shape fits every codebase. Default allocation:
 
@@ -20,7 +18,7 @@ Choose the mix per project; no shape fits every codebase. Default allocation:
 - Hard-to-test code is a design signal. Push logic into pure functions and humble components instead of adding mocks.
 - Every bug fix ships with a regression test; every new component or composable ships with its tests in the same change.
 
-## Global setup [GL, MO, docs]
+## Global setup
 
 - **Fail on unexpected console output:** a setup file makes any `console.error` or `console.warn` (Vue warnings included) fail the test. Allow-list specific messages sparingly. Unexpected warnings are bugs.
 - **MSW:** `server.listen({ onUnhandledRequest: 'error' })` in the setup file, `resetHandlers()` after each test, `close()` after all. A request with no handler fails loudly.
@@ -31,7 +29,7 @@ Choose the mix per project; no shape fits every codebase. Default allocation:
 - **Coverage:** collect it in CI (`@vitest/coverage-v8`) and gate **changed lines**, not a global percentage: new and changed code at least 80% covered, checked by Codecov patch status or `diff-cover` (Vitest's own `coverage.thresholds` are global or per file only). Exclude generated code (API clients, route maps). Coverage finds untested code; it doesn't prove behaviour, so never write a test only to raise the number.
 - Keep a shared `test/utils.ts`: a project `mount` wrapper with the app's plugins and default providers, plus fixture factories. One seam, one style, hundreds of consistent tests.
 
-## Component tests [docs, VS, GL]
+## Component tests
 
 - Test the **public interface**: props, slots and user events in; rendered output and emitted events out. Never assert private state or call internal methods.
 - Select by role and accessible name first (Testing Library `getByRole('button', { name: 'Save' })`; with plain VTU, `find('button[aria-label=…]')` or text), then label or text, and `data-testid` only when nothing semantic fits. Never CSS classes, DOM structure or template refs.
@@ -49,7 +47,7 @@ Choose the mix per project; no shape fits every codebase. Default allocation:
 - Test compound components (Tabs + TabPanel) together.
 - Accessibility: run axe-core on each component state (default, disabled, error, empty). `vitest-axe` wraps it but is pre-1.0; check it works with the project's Vitest version, or call `axe-core` directly.
 
-## Test data and mocking [MO, GL, VS]
+## Test data and mocking
 
 - Mock at the network (MSW v2 `http`/`HttpResponse`) or at your own adapter modules. Never mock Vue itself or the business logic under test.
 - Hide mock setup behind domain-named **precondition** helpers, so tests state behaviour and never mention endpoints: `await userCanCreateInvoice()` wraps `server.use(http.post('/api/invoices', …))`.
@@ -57,7 +55,7 @@ Choose the mix per project; no shape fits every codebase. Default allocation:
 - Write the unhappy shapes too: empty list, missing item, partial fields, error responses.
 - Dependency injection through `provide` or adapter modules beats deep module mocking.
 
-## Composables with lifecycle or inject [docs]
+## Composables with lifecycle or inject
 
 ```ts
 import { createApp, type App, type InjectionKey } from 'vue'
@@ -73,24 +71,24 @@ export function withSetup<T>(composable: () => T, provisions: readonly Provision
 }
 ```
 
-## Pinia and Pinia Colada [docs, GL]
+## Pinia and Pinia Colada
 
 - Store unit tests: `setActivePinia(createPinia())` in `beforeEach`. If the store relies on Pinia plugins, install the Pinia on a dummy `createApp({})`, because plugins only run once Pinia is installed in an app.
 - Component tests with stores: `createTestingPinia({ initialState, createSpy: vi.fn })` in `global.plugins` (`createSpy` is required without Vitest globals). Actions are stubbed and spied by default; arrange state by assigning it; don't mock getters, set the state that produces them.
 - In setup stores, a stubbed action is still called for real when another action calls it through the closure. Inside the store, call sibling actions through the store (`useInvoiceStore().load()`) when tests need to stub them, or test the real implementation.
 - **Components using Pinia Colada:** mount with `plugins: [createPinia(), PiniaColada]` and mock the network with MSW. **Never** `createTestingPinia()` there: stubbed actions break Colada's internal stores.
 
-## Router [docs, GL]
+## Router
 
 - Keep the router out of most component tests by design. Pages parse params and pass typed props ([routing](routing.md)), so controllers and humble components are tested with props. A humble component that renders `<RouterLink>` gets `global.stubs: { RouterLink: RouterLinkStub }`, and the test asserts `findComponent(RouterLinkStub).props('to')`.
 - Pages, guards and navigation flows use a real router with the routes under test and `createMemoryHistory()`, installed through `global.plugins`. `await router.push(…)` and `await router.isReady()` before mounting and before asserting.
 - When a component reads `useRoute()`/`useRouter()` incidentally and you only need to control them, mock the module per test (`vi.mock('vue-router')` with typed `vi.mocked(useRoute).mockReturnValue(…)`). ⚖ VTU's guide presents mocking as the common approach. This skill prefers props and a real router for pages, because param parsing and guards are behaviour worth testing.
 
-## Feature flags [GL]
+## Feature flags
 
 - Test flagged code with the flag both on and off.
 
-## Browser-level tests [MO, GL, docs]
+## Browser-level tests
 
 - **Log in once, not per test.** A Playwright setup project signs in and saves the session with `storageState` to `playwright/.auth/user.json` (gitignored); the browser projects declare `dependencies: ['setup']` and reuse it. Use one saved state per role.
 - **Isolate data.** Each test creates what it needs through the API or a seed helper, with unique names, and never depends on another test's data or order. Tests run in parallel.

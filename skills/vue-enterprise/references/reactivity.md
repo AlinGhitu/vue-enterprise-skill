@@ -1,8 +1,6 @@
 # Reactivity
 
-Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / VueUse · [VS] Vue School · [MO] Markus Oberlehner · [GL] GitLab · [CB] open-source codebases.
-
-## Choosing the primitive [docs, MT, AF]
+## Choosing the primitive
 
 - `ref` is the default (docs: "the primary API for declaring reactive state"). It holds any type, can be reassigned, survives destructuring, and can be passed to functions and `watch`.
 - `shallowRef` for large, external or replace-only data: API responses you replace wholesale, big immutable lists, and instances of third-party classes (editors, maps, charts). Update it by assigning `.value`; after an in-place mutation, call `triggerRef`.
@@ -13,7 +11,7 @@ Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / 
 - Always work on the proxy, never the original object; mutating the original triggers nothing. `toRaw` is an escape hatch; don't keep references to its result.
 - Never hand reactive proxies **out** to code outside Vue: query-cache writes, `postMessage`/workers, IndexedDB, `structuredClone`, third-party stores. Pass `toRaw(x)`, a clone of it, or a freshly built plain object. Proxies either fail to clone or break the other library's assumptions.
 
-## computed [docs, MT]
+## computed
 
 - Anything derivable from other state is a `computed`: cached, lazy, pure. Don't store derived state in a `ref` and sync it with a watcher.
 - Getters are side-effect free: no mutation, no requests, no DOM or storage access.
@@ -22,7 +20,7 @@ Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / 
 - Computeds can't take arguments. For per-item logic, extract a child component or return a function (which isn't cached).
 - Vue ≥ 3.4: a computed only triggers dependents when its value actually changes. An object-returning computed can take `oldValue` as its argument and return it when nothing meaningful changed.
 
-## Watchers — side effects only [docs, MT]
+## Watchers — side effects only
 
 - Use `watch`/`watchEffect` for effects: fetching, DOM or browser APIs, storage, logging, syncing to something outside Vue. If a `computed` can express it, it's not a watcher.
 - Prefer `watch` with explicit sources. `watchEffect` re-runs when *anything* it reads changes, and that set grows silently as the callback is edited. Keep it for effects that really depend on everything they read.
@@ -35,7 +33,7 @@ Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / 
 - Vue ≥ 3.5 watch handles also have `.pause()` and `.resume()`.
 - A watcher that copies state between parent and child invites update loops. Use `defineModel` or lift the state instead.
 
-## DOM timing [docs, MT]
+## DOM timing
 
 - DOM updates are batched to the next tick. After changing state, `await nextTick()` before measuring or focusing. A `flush: 'post'` watcher is the same thing expressed as a reaction; choose by readability.
 - Template refs: Vue ≥ 3.5 `const input = useTemplateRef('input')` (the element type is inferred from the template with current Vue language tools; add a generic only for dynamic keys); earlier versions use `ref<HTMLInputElement | null>(null)` with the same name. They are `null` until mounted and after a `v-if` removes the element, so access them in `onMounted` and null-check (`input.value?.focus()`).
@@ -43,21 +41,21 @@ Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / 
 - If you reach for `nextTick` often, the design is fighting the render cycle.
 - `useId()` (3.5) is called once at setup's top level, never inside a `computed`.
 
-## Lifecycle and async setup [docs, AF, MT]
+## Lifecycle and async setup
 
 - Lifecycle hooks, `watch`, `computed`, `provide` and `inject` must be registered synchronously during setup. Outside `<script setup>`, anything after the first `await` has lost the component instance: hooks warn or silently do nothing, and effects are never disposed.
 - `<script setup>` top-level `await` restores the instance after each `await`, but it turns the component async, which requires a `<Suspense>` ancestor (still **experimental**).
 - The preferred pattern is **async → sync**: declare the refs, start the promise without awaiting, fill the refs when it resolves, and return them synchronously. Callers build `computed`s on data that hasn't arrived yet, and no `await` is needed in setup. See [composables](composables.md).
 - SSR: only setup runs on the server. `onMounted`/`onUnmounted` don't run there. Put `window`/`document` access in `onMounted`.
 
-## Effect scopes [docs, MT, AF]
+## Effect scopes
 
 - A component's setup is already a scope; its effects stop on unmount.
 - Use `effectScope()` to group effects created outside components (or with a shorter lifetime than the component) and dispose them together with `scope.stop()`.
 - `effectScope(true)` creates a detached scope that outlives its creator. Use it for shared singletons (as in VueUse `createSharedComposable`).
 - In composables, clean up with `onScopeDispose` rather than `onUnmounted`: it works in components **and** in bare scopes. Vue 3.5: `onScopeDispose(fn, true)` suppresses the warning when there's no active scope.
 
-## "It isn't updating" checklist [MT, docs]
+## "It isn't updating" checklist
 
 1. Is the state declared reactive (`ref`/`reactive`), not a plain variable added later?
 2. Was a prop or store value copied into a local `ref` (a one-time snapshot)? Read it directly or use `computed`/`storeToRefs`.

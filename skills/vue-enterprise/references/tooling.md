@@ -1,16 +1,14 @@
 # Tooling
 
-Source tags: [docs] vuejs.org / eslint.vuejs.org / Pinia · [TS] TypeScript release notes · [AF] Anthony Fu · [VS] Vue School · [GL] GitLab · [MO] Markus Oberlehner · [CB] open-source codebases.
-
 The project's existing tooling wins. These rules are for setting up a new project or filling a gap.
 
-## Scaffold [docs]
+## Scaffold
 
 - `npm create vue@latest` (TypeScript, Router, Pinia, Vitest, ESLint, Playwright as needed), or Nuxt when you need SSR, SSG or server routes.
 - Vite as the dev server and bundler. Vue CLI is in maintenance mode.
 - Pinia 4: `npm i pinia @vue/devtools-api` (the devtools API is a required peer dependency; Pinia 4 needs TypeScript ≥ 5.6). `@pinia/testing@2` needs Pinia ≥ 4.0.2.
 
-## ESLint [docs, VS, AF, GL, CB]
+## ESLint
 
 - Flat config (`eslint.config.js`). Legacy `.eslintrc` was deprecated in ESLint 9 and removed in ESLint 10.
 - `flat/strongly-recommended` and `flat/recommended` rules are **warnings** by default, so CI passes with violations. Use `pluginVue.configs['flat/recommended-error']`, or run `eslint --max-warnings 0`.
@@ -51,26 +49,26 @@ The project's existing tooling wins. These rules are for setting up a new projec
 - Disable rules only for one line (`eslint-disable-next-line rule -- reason`), never file-wide in new files.
 - With file-based routing and no auto-imports: add `vue-router/auto-routes` to `import/core-modules` and declare `definePage` as a global.
 
-## Formatting [AF, VS, GL]
+## Formatting
 
 - **One formatting owner.** Either Prettier with ESLint's stylistic rules disabled (`@vue/eslint-config-prettier/skip-formatting` or `eslint-config-prettier`), or ESLint stylistic rules with no Prettier (`@antfu/eslint-config`). Keep whichever the project has.
 - `flat/recommended-error` includes template formatting rules (`vue/max-attributes-per-line`, `vue/html-indent` and others). With Prettier, put the skip-formatting config **last** in `eslint.config.js` so those rules are off and the two tools don't fight.
 
-## Type checking [docs, TS]
+## Type checking
 
-- `vue-tsc --build` (project references, what `create-vue` scaffolds) or `vue-tsc --noEmit` (single project) in CI; Nuxt: `nuxt typecheck`. Keep `typescript` on 6.x: `vue-tsc`, the Vue language server and typescript-eslint need the compiler API that TypeScript 7 doesn't ship. Set `vueCompilerOptions.strictTemplates: true` so templates reject unknown props, events and components. tsconfig, strictness flags, TypeScript 7 aliasing → [typescript](typescript.md).
+- `vue-tsc --build` (project references, what `create-vue` scaffolds) or `vue-tsc --noEmit` (single project) in CI; Nuxt: `nuxt typecheck`. Keep `typescript` on 6.x: `vue-tsc`, the Vue language server and typescript-eslint need the compiler API that TypeScript 7 doesn't ship. Set `vueCompilerOptions.strictTemplates: true` so templates reject unknown props, events and components. tsconfig, strictness flags, TypeScript 7 aliasing → [typescript config](typescript-config.md).
 
-## Logging [GL, OWASP]
+## Logging
 
 - `no-console` is an error, except in the logging and monitoring adapter (one `eslint-disable` there). Committed code never calls `console.log`; tests fail on unexpected console output ([testing](testing.md)).
 - Log and report through that one adapter, with structured context: feature, route name, release, and the request's correlation id when the API returns one. It scrubs secrets and personal data before anything leaves the browser ([security](security.md), [errors](errors.md)).
 
-## CI and hooks [AF, GL]
+## CI and hooks
 
 - CI runs lint (zero warnings) + `vue-tsc` + tests with changed-line coverage + the bundle budget ([performance](performance.md)); lint-staged on pre-commit.
 - Keep changes reviewable (around 500 lines).
 
-## Dependencies [AF, GL, MO]
+## Dependencies
 
 - Reach for VueUse before hand-writing browser or sensor composables; check `@vueuse/core` is in `package.json` first and propose it if not (see [vueuse-mapping](vueuse-mapping.md)).
 - Apps are ESM: `"type": "module"`. Publish internal and shared packages as ESM-only.
@@ -80,11 +78,11 @@ The project's existing tooling wins. These rules are for setting up a new projec
 - Patch a dependency (`pnpm patch`) only as a last resort, with a comment giving the reason, the upstream issue and when to remove it, plus a test proving the patch works.
 - `pnpm audit --audit-level=high --prod` (or `npm audit --audit-level=high`) in CI; without a level, pnpm fails on `low` and npm on any finding, and the check gets ignored. Stay near the latest versions, after a short cooldown (`minimumReleaseAge`). Install scripts, cooldowns, CI hardening, publishing and SRI → [supply chain](supply-chain.md).
 
-## Environment [docs, VS]
+## Environment
 
 - Only `VITE_`-prefixed variables reach client code, via `import.meta.env`. They're public. Type them by augmenting `ImportMetaEnv` in `env.d.ts`.
 - Production builds strip dev warnings and devtools; make sure `process.env.NODE_ENV` is `'production'` (Vite does this).
 
-## Component workbench [CB]
+## Component workbench
 
 - A story or playground per shared component (Storybook, Histoire) gives an isolated place to reproduce and review states, and a target for a11y checks.

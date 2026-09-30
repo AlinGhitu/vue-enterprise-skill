@@ -1,10 +1,8 @@
 # Performance
 
-Source tags: [docs] official docs · [MT] Michael Thiessen · [AF] Anthony Fu / VueUse · [VS] Vue School · [MO] Markus Oberlehner · [GL] GitLab · [CB] open-source codebases.
-
 Get it working first, then measure, then optimize what measurement shows. Don't pre-optimize.
 
-## Measure [docs, VS]
+## Measure
 
 - Field data (Core Web Vitals at p75: LCP, INP, CLS) from real users beats a local Lighthouse run.
 - Targets are the "good" thresholds at p75, per device class: LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1. An optimization names the metric it moves and shows it before and after; a change that pushes a metric past its threshold needs a reason in the PR.
@@ -12,7 +10,7 @@ Get it working first, then measure, then optimize what measurement shows. Don't 
 - Bundle size: `vite-bundle-visualizer` or `rollup-plugin-visualizer`; `npx nuxi analyze` in Nuxt. These only visualize.
 - **Enforce a budget in CI** with `size-limit` (`@size-limit/file` for built assets): a `.size-limit.json` entry per entry chunk (`[{ "path": "dist/assets/index-*.js", "limit": "180 kB" }]`), set a little above today's size. A change that crosses it fails the build and must either shrink or raise the limit with a reason in the PR.
 
-## Load performance [docs, VS]
+## Load performance
 
 - Lazy-load routes (see [routing](routing.md)) and components absent from the first render (modals, drawers, heavy editors) with `defineAsyncComponent`, rendered behind `v-if`. `v-show` would load them anyway.
 - Give async components `loadingComponent`, `errorComponent` and a `timeout`.
@@ -23,7 +21,7 @@ Get it working first, then measure, then optimize what measurement shows. Don't 
 - Start critical first-view requests early (in parallel with the JS, not after mount), and prefetch the chunks and queries the user is likely to need next.
 - Self-host fonts; if you need a web font, use WOFF2 and as few weights as possible.
 
-## Update performance [docs]
+## Update performance
 
 - **Stable props:** pass derived values to list items (`:active="item.id === activeId"`) instead of shared state (`:active-id="activeId"`), so only the items that changed re-render.
 - Large or immutable data: `shallowRef` and replace it wholesale instead of deep-proxying it.
