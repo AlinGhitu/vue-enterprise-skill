@@ -1,5 +1,7 @@
 # vue-enterprise
 
+![vue-enterprise-skill: teaches AI coding agents the conventions of large, long-lived Vue 3 + TypeScript apps](.github/social-preview.png)
+
 An [Agent Skill](https://agentskills.io) with conventions for large, long-lived Vue 3 + TypeScript apps, Nuxt included. It covers Composition API, Pinia, Pinia Colada, Vue Router, Vitest and Playwright. It works in Claude Code and in GitHub Copilot (VS Code agent mode, Copilot CLI, and the Copilot cloud agent).
 
 Every rule is checked against the official Vue, Pinia, Pinia Colada, Vue Router and Vue Test Utils docs, then tested against community practice and open-source Vue apps. Where sources disagree, the reference files mark the choice with ⚖ and give the reason. CI compiles, lints and runs the skill's code examples on every change, using the skill's own TypeScript and ESLint settings. Releases are listed in [CHANGELOG.md](CHANGELOG.md).
