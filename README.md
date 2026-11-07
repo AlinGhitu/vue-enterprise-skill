@@ -96,7 +96,11 @@ evals/                       setup script and manual prompts to check agent beha
 
 ## Contributing
 
-See [AGENTS.md](AGENTS.md) for editing rules, running the checks and releasing.
+Bug reports, eval runs and fixes are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md); the full editing rules, which agents read too, are in [AGENTS.md](AGENTS.md). Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+If a rule or example would lead an agent to write vulnerable code, report it privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

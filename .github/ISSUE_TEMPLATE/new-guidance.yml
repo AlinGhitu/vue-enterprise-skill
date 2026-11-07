@@ -1,0 +1,25 @@
+name: Propose new guidance
+description: Something agents get wrong in Vue apps that the skill doesn't cover yet.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What agents get wrong
+      description: The mistake you keep seeing, ideally with an example.
+    validations:
+      required: true
+  - type: textarea
+    id: rule
+    attributes:
+      label: Proposed rule
+      description: The rule as you'd write it, and which reference file it belongs in.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: Links that back the rule, official docs first.
+    validations:
+      required: true

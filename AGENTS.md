@@ -9,6 +9,7 @@ This repository publishes `vue-enterprise`, an Agent Skill with Vue 3 + TypeScri
 - `skills/vue-enterprise/assets/variants/` holds copies of `vue.instructions.md` with a narrower `applyTo`, written by `checks/scripts/variants.mjs`. Edit the default file, then run `pnpm variants`; never edit a variant by hand.
 - `evals/` holds `setup.mjs`, which builds a Vue app with the skill installed, and `prompts.md`, the manual prompts for checking agent behaviour in each tool.
 - `CHANGELOG.md` records every release.
+- `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` and `.github/` (issue and PR templates, `CODEOWNERS`, `dependabot.yml`) hold the contribution rules for people. When a rule here changes, update `CONTRIBUTING.md` and the PR template to match.
 
 ## Editing the skill
 

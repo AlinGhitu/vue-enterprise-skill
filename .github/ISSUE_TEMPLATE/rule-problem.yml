@@ -1,0 +1,30 @@
+name: Rule is wrong or out of date
+description: A rule, checklist item or code example in the skill disagrees with the docs or current practice.
+labels: [bug]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Where
+      description: File and heading, e.g. references/forms.md, "Validation".
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong
+      description: What the skill says, and what it should say instead.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: Links that show the correct behaviour, official docs first.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Skill version
+      description: From the footer of SKILL.md.

@@ -34,7 +34,8 @@ const files = [
   join(repo, 'README.md'),
   join(repo, 'AGENTS.md'),
 ]
-for (const file of files) {
+const communityFiles = ['CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md'].map((f) => join(repo, f))
+for (const file of [...files, ...communityFiles]) {
   const text = readFileSync(file, 'utf8')
   for (const [, target] of text.matchAll(/\]\(([^)\s]+)\)/g)) {
     if (/^(https?:|mailto:|#)/.test(target)) continue
@@ -45,7 +46,7 @@ for (const file of files) {
 
 // Text is clean UTF-8 with LF line endings: no BOM, no NUL or other control bytes.
 const utf8 = new TextDecoder('utf-8', { fatal: true })
-for (const file of [...files, join(skill, 'assets', 'vue.instructions.md'), join(repo, 'CHANGELOG.md'), join(repo, 'evals', 'prompts.md')]) {
+for (const file of [...files, ...communityFiles, join(skill, 'assets', 'vue.instructions.md'), join(repo, 'CHANGELOG.md'), join(repo, 'evals', 'prompts.md')]) {
   const name = file.slice(repo.length + 1)
   let text
   try {
