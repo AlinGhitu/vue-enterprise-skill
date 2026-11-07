@@ -1,3 +1,8 @@
 allowBuilds:
   esbuild: true
 minimumReleaseAge: 1440
+# Security floors for transitive dependencies whose parents still pin a vulnerable major:
+# glob via js-beautify (@vue/test-utils), minimatch via eslint and editorconfig.
+overrides:
+  glob: ^14.0.2
+  minimatch: ^11.0.1
