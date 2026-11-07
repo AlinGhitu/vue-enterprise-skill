@@ -91,7 +91,7 @@ skills/vue-enterprise/
 ├── references/              detailed guidance, loaded on demand
 └── assets/                  vue.instructions.md (always-on rules) and variants/ with narrower applyTo
 checks/                      CI project that validates the skill and its examples
-evals/                       setup script and manual prompts to check agent behaviour per tool
+evals/                       setup script, manual prompts to check agent behaviour per tool, and comparison-2026-11/ (skill vs no skill results)
 ```
 
 ## Contributing

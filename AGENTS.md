@@ -7,7 +7,7 @@ This repository publishes `vue-enterprise`, an Agent Skill with Vue 3 + TypeScri
 - `skills/vue-enterprise/` is the skill: `SKILL.md`, `references/`, and `assets/vue.instructions.md`, the always-on rules that users copy into their app.
 - `checks/` is a small Vue project that CI uses to validate the skill. `scripts/snippets.mjs` lists which code blocks are extracted from the references; the generated files carry a `GENERATED` header and must never be edited by hand.
 - `skills/vue-enterprise/assets/variants/` holds copies of `vue.instructions.md` with a narrower `applyTo`, written by `checks/scripts/variants.mjs`. Edit the default file, then run `pnpm variants`; never edit a variant by hand.
-- `evals/` holds `setup.mjs`, which builds a Vue app with the skill installed, and `prompts.md`, the manual prompts for checking agent behaviour in each tool.
+- `evals/` holds `setup.mjs`, which builds a Vue app with the skill installed, `prompts.md`, the manual prompts for checking agent behaviour in each tool, and `comparison-2026-11/`, the raw results of the no skill / vuejs-ai / vue-enterprise comparison (not checked by CI; never edit the recorded results).
 - `CHANGELOG.md` records every release.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` and `.github/` (issue and PR templates, `CODEOWNERS`, `dependabot.yml`) hold the contribution rules for people. When a rule here changes, update `CONTRIBUTING.md` and the PR template to match.
 
