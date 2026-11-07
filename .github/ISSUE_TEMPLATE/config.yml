@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/AlinGhitu/vue-enterprise-skill/security/advisories/new
+    about: Advice that leads to vulnerable code goes here, privately. See SECURITY.md.
+  - name: Questions about Vue itself
+    url: https://vuejs.org/about/community-guide
+    about: For help with Vue, Pinia or Nuxt that isn't about this skill.
