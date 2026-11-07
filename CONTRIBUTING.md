@@ -13,6 +13,8 @@ By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md). To
 
 Typos, broken links and small wording fixes can go straight to a pull request.
 
+For questions about using the skill, or an idea you'd like to talk through first, start a thread in [Discussions](https://github.com/AlinGhitu/vue-enterprise-skill/discussions).
+
 ## Rules for changes
 
 The editing rules live in [AGENTS.md](AGENTS.md), which coding agents read too. The short version:
